@@ -1,0 +1,8 @@
+{
+  "name": "gym-ecommerce",
+  "private": true,
+  "scripts": {
+    "front": "npm run dev --prefix dashboard",
+    "back": "npm run dev --prefix server"
+  }
+}

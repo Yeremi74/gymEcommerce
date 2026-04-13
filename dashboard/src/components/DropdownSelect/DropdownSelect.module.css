@@ -1,0 +1,80 @@
+.root {
+  position: relative;
+  width: 100%;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  font: inherit;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bgElevated);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.trigger:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.triggerIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+.chevron {
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.list {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bgElevated);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.option {
+  padding: 10px 12px;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.option:hover,
+.optionHighlight {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.optionSelected {
+  font-weight: 600;
+}

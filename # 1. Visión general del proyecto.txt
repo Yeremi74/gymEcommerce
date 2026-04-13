@@ -1,0 +1,170 @@
+# 1. Visión general del proyecto
+
+* Ecommerce de suplementos fitness
+* Tienda para clientes
+* Panel de administración
+* Integración de pagos (Stripe y BCV)
+
+---
+
+# 2. Funcionalidades para clientes
+
+## 2.1 Cuenta de usuario
+
+* Registro de usuarios
+* Envío de correo al registrarse
+* Recuperación de contraseña con OTP
+* Sección “Mi cuenta”
+
+---
+
+## 2.2 Funcionalidades generales
+
+* Carrito de compras
+* Aplicación de cupones
+* Posibilidad de preguntar a una IA
+* Artículos informativos (blog)
+
+---
+
+## 2.3 Página de producto
+
+* Imágenes con zoom
+* Descripción detallada
+* Ingredientes
+* Beneficios
+* Reviews
+* Selector de variantes (sabor, tamaño)
+* Botón “Añadir al carrito”
+* Productos relacionados
+
+---
+
+## 2.4 Páginas informativas
+
+### Sobre nosotros
+
+* Historia de la marca
+* Valores (calidad, transparencia)
+* Certificaciones
+
+### Contacto
+
+* Formulario
+* Email / WhatsApp
+* Ubicación (opcional)
+* FAQ rápida
+
+### FAQ
+
+* Envíos
+* Devoluciones
+* Uso de suplementos
+* Pagos
+
+---
+
+## 2.5 Diferenciadores
+
+* Comparador de productos
+* Calculadora de macros/calorías
+
+---
+
+# 3. Panel de administración
+
+## 3.1 Gestión de usuarios
+
+* Crear usuarios admin y otros roles
+
+---
+
+## 3.2 Dashboard
+
+* Ventas totales
+* Pedidos recientes
+* Productos más vendidos
+* Gráficos
+
+---
+
+## 3.3 Gestión de productos
+
+* Crear / editar productos
+* Variantes (tamaño, sabor)
+* Stock
+* Categorías
+* Atributos de productos
+* Descuentos en productos
+
+---
+
+## 3.4 Gestión de pedidos
+
+* Ver pedidos
+* Cambiar estado (pendiente, enviado, entregado)
+* Tracking
+
+---
+
+## 3.5 Gestión de clientes
+
+* Ver clientes
+* Historial de compras
+
+---
+
+## 3.6 Cupones
+
+* Crear descuentos
+* Limitar por uso o fecha
+
+---
+
+## 3.7 Blog
+
+* Crear artículos
+* SEO (meta título, descripción)
+
+---
+
+## 3.8 Reviews
+
+* Moderar opiniones
+
+---
+
+# 4. Funcionalidades avanzadas
+
+## 4.1 Personalización e IA
+
+* Recomendador inteligente (“Productos para ti”) basado en compras o navegación
+* Encuesta para alimentar el sistema de recomendaciones
+
+---
+
+## 4.2 Filtros inteligentes
+
+* Filtro por objetivo fitness:
+
+  * Ganar masa
+  * Definición
+  * Energía
+  * Salud
+
+---
+
+## 4.3 Herramientas para el usuario
+
+* Calculadora de dosis/servings según:
+
+  * Peso
+  * Objetivo
+  * Frecuencia de entrenamiento
+
+---
+
+Si quieres, puedo convertir esto en:
+
+* un documento tipo propuesta para cliente
+* o en una lista de tareas tipo roadmap para desarrollo paso a paso

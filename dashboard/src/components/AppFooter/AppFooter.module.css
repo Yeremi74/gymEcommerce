@@ -1,0 +1,77 @@
+.root {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  background: #ebeae6;
+  padding: 40px var(--space) 24px;
+}
+
+.inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.brandLogo {
+  margin: 0 0 6px;
+  font-family: var(--fontDisplay);
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+.tagline {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  max-width: 32ch;
+}
+
+.cols {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.label {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.link {
+  font-size: 0.9375rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.muted {
+  font-size: 0.875rem;
+  color: color-mix(in srgb, var(--muted) 85%, transparent);
+}
+
+.copy {
+  max-width: var(--max);
+  margin: 28px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}

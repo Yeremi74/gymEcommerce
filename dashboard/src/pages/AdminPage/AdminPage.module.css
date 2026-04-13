@@ -1,0 +1,249 @@
+.main {
+  flex: 1;
+  padding: var(--space);
+}
+
+.shell {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.back {
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.back:hover {
+  color: var(--ink);
+}
+
+.title {
+  margin: 0 0 12px;
+  font-family: var(--fontDisplay);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.lead {
+  margin: 0 0 28px;
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.input,
+.textarea {
+  font: inherit;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bgElevated);
+  color: var(--ink);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.fileZone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.fileInputHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.filePickBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-weight: 600;
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bgElevated);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.filePickBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.fileHint {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.dropArea {
+  min-height: 120px;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bgElevated) 92%, transparent);
+}
+
+.dropEmpty {
+  margin: 0;
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 12px;
+}
+
+.imageCard {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: calc(var(--radius) - 2px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bgElevated);
+  cursor: grab;
+  touch-action: none;
+}
+
+.imageCard:active {
+  cursor: grabbing;
+}
+
+.imageThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.imageRemove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  line-height: 1;
+  font-weight: 700;
+  color: #fff;
+  background: color-mix(in srgb, #1a1a1a 75%, transparent);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.imageRemove:hover {
+  background: #a31f1f;
+}
+
+.dragHint {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.submit {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 14px 22px;
+  font: inherit;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accentInk);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+
+.submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.ok {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #1a5c1a;
+}
+
+.err {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #a31f1f;
+}

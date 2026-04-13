@@ -1,0 +1,89 @@
+.root {
+  padding: calc(var(--space) * 1.1) var(--space) calc(var(--space) * 1.2);
+  background: var(--bgElevated);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.head {
+  max-width: var(--max);
+  margin: 0 auto 28px;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-family: var(--fontDisplay);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  letter-spacing: 0.04em;
+}
+
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  max-width: 52ch;
+}
+
+.grid {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(16px, 3vw, 24px);
+}
+
+.card {
+  margin: 0;
+  padding: 20px 18px 22px;
+  border-radius: var(--radiusLg);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 65%, var(--bgElevated));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 100%;
+}
+
+.iconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: var(--accentInk);
+}
+
+.iconSvg {
+  width: 24px;
+  height: 24px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.cardText {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

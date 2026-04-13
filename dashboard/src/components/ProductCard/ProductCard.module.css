@@ -1,0 +1,116 @@
+.root {
+  width: 100%;
+  min-height: 0;
+  color: inherit;
+}
+
+.cardInner {
+  position: relative;
+}
+
+.staticInner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cardLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.mediaBlock {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.media {
+  width: 100%;
+  height: 100%;
+  background: #f2f1ee;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 5px 8px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 4px;
+}
+
+.overlayActions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 10px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .overlayActions {
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+
+  .root:hover .overlayActions,
+  .root:focus-within .overlayActions {
+    opacity: 1;
+  }
+}
+
+.body {
+  padding: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.price {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--ink);
+}

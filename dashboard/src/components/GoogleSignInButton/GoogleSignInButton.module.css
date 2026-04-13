@@ -1,0 +1,15 @@
+.wrap {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrap :global(.gsi-material-button) {
+  width: 100%;
+}
+
+.wrapDisabled {
+  pointer-events: none;
+  opacity: 0.55;
+}
