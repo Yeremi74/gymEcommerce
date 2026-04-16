@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom"
+import { useState } from "react"
+import { Link, useSearchParams } from "react-router-dom"
 import AppHeader from "../../components/AppHeader/AppHeader"
 import AppFooter from "../../components/AppFooter/AppFooter"
+import PaymentMethodsModal from "../../components/PaymentMethodsModal/PaymentMethodsModal"
 import { resolveAssetUrl } from "../../config/apiBase.js"
 import { useAuth } from "../../context/AuthContext"
 import { useProducts } from "../../context/ProductsContext"
@@ -15,7 +17,10 @@ function parseUsdNumber(raw) {
 }
 
 export default function CartPage() {
-  const { user } = useAuth()
+  const { user, token } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false)
+  const paymentSuccess = searchParams.get("payment") === "success"
   const { getProductById } = useProducts()
   const { cartItems, setCartLineQuantity, removeFromCart } = useUserLists()
 
@@ -86,6 +91,18 @@ export default function CartPage() {
     <div className="page">
       <AppHeader />
       <main className={styles.main}>
+        {paymentSuccess ? (
+          <div className={styles.paymentBanner} role="status">
+            <span>Pago recibido correctamente.</span>
+            <button
+              type="button"
+              className={styles.paymentBannerDismiss}
+              onClick={() => setSearchParams({}, { replace: true })}
+            >
+              Entendido
+            </button>
+          </div>
+        ) : null}
         <header className={styles.hero}>
           <div className={styles.heroTop}>
             <h1 className={styles.heroTitle}>Carrito</h1>
@@ -224,9 +241,24 @@ export default function CartPage() {
                   <span>Total estimado</span>
                   <strong>{subtotalLabel}</strong>
                 </div>
-                <Link className={styles.secondaryCta} to="/">
-                  Seguir comprando
-                </Link>
+                <div className={styles.summaryActions}>
+                  <Link className={styles.secondaryCta} to="/">
+                    Seguir comprando
+                  </Link>
+                  <button
+                    type="button"
+                    className={styles.payCta}
+                    disabled={subtotal < 0.5}
+                    title={
+                      subtotal < 0.5
+                        ? "El importe mínimo para pagar es 0,50 USD"
+                        : undefined
+                    }
+                    onClick={() => setPaymentModalOpen(true)}
+                  >
+                    Pagar
+                  </button>
+                </div>
               </div>
             </aside>
           </div>
@@ -236,6 +268,15 @@ export default function CartPage() {
           <Link className={styles.backLink} to="/">
             ← Volver al inicio
           </Link>
+        ) : null}
+        {rows.length > 0 && token ? (
+          <PaymentMethodsModal
+            open={paymentModalOpen}
+            onClose={() => setPaymentModalOpen(false)}
+            amountUsd={subtotal}
+            amountLabel={subtotalLabel}
+            token={token}
+          />
         ) : null}
       </main>
       <AppFooter />

@@ -124,6 +124,30 @@ summary.iconBtn::-webkit-details-marker {
   white-space: nowrap;
 }
 
+.profileLink {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.profileLink:hover {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
 .profileLogout {
   width: 100%;
   font-family: inherit;

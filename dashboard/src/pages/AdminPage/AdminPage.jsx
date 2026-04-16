@@ -73,6 +73,8 @@ export default function AdminPage() {
   const [price, setPrice] = useState("")
   const [detail, setDetail] = useState("")
   const [description, setDescription] = useState("")
+  const [stockMin, setStockMin] = useState("0")
+  const [stockMax, setStockMax] = useState("100")
   const [images, setImages] = useState([])
   const [fileKey, setFileKey] = useState(0)
   const [status, setStatus] = useState("")
@@ -148,6 +150,8 @@ export default function AdminPage() {
       body.append("price", price)
       body.append("detail", detail)
       body.append("description", description)
+      body.append("stockMin", stockMin)
+      body.append("stockMax", stockMax)
       for (const item of images) {
         body.append("images", item.file)
       }
@@ -166,6 +170,8 @@ export default function AdminPage() {
       setPrice("")
       setDetail("")
       setDescription("")
+      setStockMin("0")
+      setStockMax("100")
       setImages((prev) => {
         prev.forEach((img) => URL.revokeObjectURL(img.previewUrl))
         return []
@@ -274,6 +280,34 @@ export default function AdminPage() {
                   className={styles.input}
                   value={detail}
                   onChange={(e) => setDetail(e.target.value)}
+                />
+              </label>
+            </div>
+            <div className={styles.row}>
+              <label className={styles.field}>
+                <span className={styles.label}>Stock mínimo</span>
+                <input
+                  className={styles.input}
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  step={1}
+                  value={stockMin}
+                  onChange={(e) => setStockMin(e.target.value)}
+                  required
+                />
+              </label>
+              <label className={styles.field}>
+                <span className={styles.label}>Stock máximo</span>
+                <input
+                  className={styles.input}
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  step={1}
+                  value={stockMax}
+                  onChange={(e) => setStockMax(e.target.value)}
+                  required
                 />
               </label>
             </div>

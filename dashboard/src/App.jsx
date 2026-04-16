@@ -3,6 +3,8 @@ import HomePage from "./pages/HomePage/HomePage"
 import ArticlePage from "./pages/ArticlePage/ArticlePage"
 import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage"
 import AdminPage from "./pages/AdminPage/AdminPage"
+import ProductsAdminPage from "./pages/ProductsAdminPage/ProductsAdminPage"
+import InventoryPage from "./pages/InventoryPage/InventoryPage"
 import LoginPage from "./pages/auth/LoginPage"
 import RegisterPage from "./pages/auth/RegisterPage"
 import FavoritesPage from "./pages/FavoritesPage/FavoritesPage"
@@ -20,6 +22,8 @@ function App() {
         <Route path="/favoritos" element={<Navigate to="/favorites" replace />} />
         <Route path="/carrito" element={<Navigate to="/cart" replace />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/productos" element={<ProductsAdminPage />} />
+        <Route path="/inventario" element={<InventoryPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

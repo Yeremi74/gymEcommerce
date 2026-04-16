@@ -372,6 +372,28 @@ export default function AppHeader() {
                 <p className={styles.profileEmail} title={user.email}>
                   {user.name}
                 </p>
+                {user.isMainAdmin === true ? (
+                  <>
+                    <Link
+                      className={styles.profileLink}
+                      to="/productos"
+                      onClick={(e) => {
+                        e.currentTarget.closest("details")?.removeAttribute("open")
+                      }}
+                    >
+                      Productos
+                    </Link>
+                    <Link
+                      className={styles.profileLink}
+                      to="/inventario"
+                      onClick={(e) => {
+                        e.currentTarget.closest("details")?.removeAttribute("open")
+                      }}
+                    >
+                      Movimientos de inventario
+                    </Link>
+                  </>
+                ) : null}
                 <button className={styles.profileLogout} type="button" onClick={() => logout()}>
                   Salir
                 </button>
