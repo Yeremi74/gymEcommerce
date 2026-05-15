@@ -459,6 +459,81 @@
   letter-spacing: -0.02em;
 }
 
+.summaryActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.summaryActions .secondaryCta {
+  margin-top: 0;
+}
+
+.payCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border: none;
+  background: var(--accent);
+  color: var(--accentInk);
+  cursor: pointer;
+  width: 100%;
+  transition: filter 0.15s ease;
+}
+
+.payCta:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+
+.payCta:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.payCta:focus-visible {
+  outline: 2px solid var(--accentInk);
+  outline-offset: 2px;
+}
+
+.paymentBanner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, #1a5c1a 45%, var(--line));
+  background: color-mix(in srgb, #1a5c1a 12%, var(--bgElevated));
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.paymentBannerDismiss {
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.paymentBannerDismiss:hover {
+  border-color: var(--ink);
+}
+
 .backLink {
   display: inline-flex;
   margin-top: 28px;

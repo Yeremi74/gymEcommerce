@@ -1,0 +1,258 @@
+.main {
+  flex: 1;
+  padding: var(--space);
+}
+
+.shell {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.back {
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.back:hover {
+  color: var(--ink);
+}
+
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pageHeaderText {
+  flex: 1;
+  min-width: min(100%, 240px);
+}
+
+.pageHeaderText .title {
+  margin: 0 0 8px;
+}
+
+.pageHeaderText .lead {
+  margin: 0;
+}
+
+.title {
+  font-family: var(--fontDisplay);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.lead {
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.primaryBtn {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accentInk);
+  cursor: pointer;
+  transition: filter 0.15s ease;
+  flex-shrink: 0;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondaryBtn {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--bgElevated);
+  color: var(--ink);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.secondaryBtn:hover {
+  border-color: var(--ink);
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bgElevated);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.table th,
+.table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  vertical-align: middle;
+}
+
+.table th {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  display: block;
+}
+
+.thumbPlaceholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--line) 50%, transparent);
+}
+
+.stockValue {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 720px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding-top: 4px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.input,
+.textarea {
+  font: inherit;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bgElevated);
+  color: var(--ink);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.fieldHint {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.submitBtn {
+  padding: 14px 22px;
+  font: inherit;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accentInk);
+  cursor: pointer;
+}
+
+.submitBtn:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+
+.submitBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.formOk {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #1a5c1a;
+}
+
+.formErr {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #a31f1f;
+}
+
+.empty {
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}

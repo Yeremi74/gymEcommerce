@@ -9,6 +9,9 @@ const { OAuth2Client } = require("google-auth-library")
 const { MongoClient, ObjectId } = require("mongodb")
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") })
 
+const stripeSecret = (process.env.STRIPE_SECRET_KEY || "").trim()
+const stripe = stripeSecret.startsWith("sk_") ? require("stripe")(stripeSecret) : null
+
 const port = Number(process.env.PORT || process.env.port) || 3000
 const mainAdminSecret =
   process.env.MAIN_ADMIN_SECRET ||
@@ -189,6 +192,49 @@ function adminProductsAuth(req, res, next) {
     return res.status(401).json({ error: "Unauthorized" })
   }
   return res.status(401).json({ error: "Unauthorized" })
+}
+
+function stockPairFromDoc(doc) {
+  const sm = doc.stockMin
+  const sx = doc.stockMax
+  const min = Number.isInteger(sm) && sm >= 0 ? sm : 0
+  let max = Number.isInteger(sx) && sx >= 0 ? sx : min
+  if (max < min) max = min
+  return { stockMin: min, stockMax: max }
+}
+
+function currentStockFromDoc(doc, pair) {
+  const { stockMin, stockMax } = pair
+  const cs = doc.currentStock
+  if (Number.isInteger(cs) && cs >= 0) {
+    return Math.min(cs, stockMax)
+  }
+  return Math.min(Math.max(0, stockMin), stockMax)
+}
+
+function parseStockFields(body) {
+  if (!body || typeof body !== "object") {
+    return { error: "Datos inválidos" }
+  }
+  const rawMin = body.stockMin ?? body.stock_min
+  const rawMax = body.stockMax ?? body.stock_max
+  const minStr = rawMin != null && String(rawMin).trim() !== "" ? String(rawMin).trim() : ""
+  const maxStr = rawMax != null && String(rawMax).trim() !== "" ? String(rawMax).trim() : ""
+  if (minStr === "" || maxStr === "") {
+    return { error: "Stock mínimo y máximo son obligatorios" }
+  }
+  const stockMin = parseInt(minStr, 10)
+  const stockMax = parseInt(maxStr, 10)
+  if (!Number.isFinite(stockMin) || stockMin < 0) {
+    return { error: "Stock mínimo inválido" }
+  }
+  if (!Number.isFinite(stockMax) || stockMax < 0) {
+    return { error: "Stock máximo inválido" }
+  }
+  if (stockMax < stockMin) {
+    return { error: "El stock máximo debe ser mayor o igual al mínimo" }
+  }
+  return { stockMin, stockMax }
 }
 
 function productCreatedTimestamp(doc) {
@@ -448,6 +494,35 @@ app.get("/api/auth/me", authMiddleware, (req, res) => {
       isMainAdmin: isMainAdminEmail(req.auth.email),
     },
   })
+})
+
+app.post("/api/payments/create-payment-intent", authMiddleware, async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: "Pagos no configurados en el servidor" })
+  }
+  const amountUsd = Number(req.body?.amount)
+  if (!Number.isFinite(amountUsd) || amountUsd < 0.5) {
+    return res.status(400).json({
+      error: "El importe debe ser al menos 0,50 USD",
+    })
+  }
+  const amountCents = Math.round(amountUsd * 100)
+  if (amountCents < 50) {
+    return res.status(400).json({
+      error: "El importe debe ser al menos 0,50 USD",
+    })
+  }
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amountCents,
+      currency: "usd",
+      automatic_payment_methods: { enabled: true },
+    })
+    res.json({ clientSecret: paymentIntent.client_secret })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "No se pudo iniciar el pago" })
+  }
 })
 
 app.get("/api/me/library", authMiddleware, async (req, res) => {
@@ -848,6 +923,11 @@ app.post(
   if (!description || !String(description).trim()) {
     return res.status(400).json({ error: "Description required" })
   }
+  const stockParsed = parseStockFields(req.body)
+  if (stockParsed.error) {
+    return res.status(400).json({ error: stockParsed.error })
+  }
+  const { stockMin, stockMax } = stockParsed
   const imageUrls = files.map((f) => `/uploads/${f.filename}`)
   const imageUrl = imageUrls[0]
   const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -879,13 +959,200 @@ app.post(
   }
 )
 
+app.put(
+  "/api/admin/products/:productId",
+  adminProductsAuth,
+  upload.array("images", 12),
+  async (req, res) => {
+    const productId =
+      typeof req.params.productId === "string" ? req.params.productId.trim() : ""
+    if (!productId) {
+      return res.status(400).json({ error: "productId requerido" })
+    }
+    try {
+      const existing = await productsCollection.findOne({ id: productId })
+      if (!existing) {
+        return res.status(404).json({ error: "Producto no encontrado" })
+      }
+      const { name, price, detail, description } = req.body
+      const files = req.files || []
+      if (!name || !String(name).trim()) {
+        return res.status(400).json({ error: "Name required" })
+      }
+      if (!price || !String(price).trim()) {
+        return res.status(400).json({ error: "Price required" })
+      }
+      if (!description || !String(description).trim()) {
+        return res.status(400).json({ error: "Description required" })
+      }
+      const stockParsed = parseStockFields(req.body)
+      if (stockParsed.error) {
+        return res.status(400).json({ error: stockParsed.error })
+      }
+      const { stockMin, stockMax } = stockParsed
+      let imageUrl = existing.imageUrl
+      let imageUrls =
+        Array.isArray(existing.imageUrls) && existing.imageUrls.length > 0
+          ? existing.imageUrls
+          : existing.imageUrl
+            ? [existing.imageUrl]
+            : []
+      if (files.length > 0) {
+        const newUrls = files.map((f) => `/uploads/${f.filename}`)
+        imageUrls = newUrls
+        imageUrl = newUrls[0]
+      }
+      const update = {
+        name: String(name).trim(),
+        price: String(price).trim(),
+        description: String(description).trim(),
+        imageUrl,
+        imageUrls,
+        stockMin,
+        stockMax,
+      }
+      if (existing.kind === "bar") {
+        update.flavor = detail ? String(detail).trim() : ""
+      } else if (existing.kind === "powder") {
+        update.sublabel = detail ? String(detail).trim() : ""
+      }
+      const prevCs =
+        Number.isInteger(existing.currentStock) && existing.currentStock >= 0
+          ? existing.currentStock
+          : stockMin
+      let nextCurrent = Math.min(prevCs, stockMax)
+      nextCurrent = Math.max(0, nextCurrent)
+      update.currentStock = nextCurrent
+      await productsCollection.updateOne({ id: productId }, { $set: update })
+      res.json({ ok: true })
+    } catch (err) {
+      console.error(err)
+      res.status(500).json({ error: "Could not update product" })
+    }
+  },
+)
+
+app.patch("/api/admin/products/:productId/inventory", adminProductsAuth, async (req, res) => {
+  const productId =
+    typeof req.params.productId === "string" ? req.params.productId.trim() : ""
+  if (!productId) {
+    return res.status(400).json({ error: "productId requerido" })
+  }
+  const raw = req.body?.currentStock ?? req.body?.current_stock
+  const n = parseInt(String(raw ?? "").trim(), 10)
+  if (!Number.isFinite(n) || n < 0) {
+    return res.status(400).json({ error: "Stock actual inválido" })
+  }
+  try {
+    const doc = await productsCollection.findOne({ id: productId })
+    if (!doc) {
+      return res.status(404).json({ error: "Producto no encontrado" })
+    }
+    const pair = stockPairFromDoc(doc)
+    const { stockMax } = pair
+    if (n > stockMax) {
+      return res.status(400).json({
+        error: `El stock actual no puede superar el máximo (${stockMax})`,
+      })
+    }
+    await productsCollection.updateOne({ id: productId }, { $set: { currentStock: n } })
+    res.json({ ok: true, currentStock: n })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "No se pudo actualizar el inventario" })
+  }
+})
+
+app.post("/api/admin/inventory/movements", adminProductsAuth, async (req, res) => {
+  const productId =
+    typeof req.body?.productId === "string" ? req.body.productId.trim() : ""
+  const kind = req.body?.kind
+  const noteRaw = req.body?.note
+  const note = typeof noteRaw === "string" ? noteRaw.trim().slice(0, 500) : ""
+
+  if (!productId) {
+    return res.status(400).json({ error: "productId requerido" })
+  }
+  if (kind !== "set" && kind !== "in" && kind !== "out") {
+    return res.status(400).json({ error: "Tipo de movimiento inválido" })
+  }
+
+  const amt = parseInt(String(req.body?.amount ?? "").trim(), 10)
+
+  try {
+    const doc = await productsCollection.findOne({ id: productId })
+    if (!doc) {
+      return res.status(404).json({ error: "Producto no encontrado" })
+    }
+    const pair = stockPairFromDoc(doc)
+    const { stockMax } = pair
+    const previousStock = currentStockFromDoc(doc, pair)
+
+    let newStock
+    if (kind === "set") {
+      if (!Number.isFinite(amt) || amt < 0) {
+        return res.status(400).json({ error: "Indica un stock válido (entero ≥ 0)" })
+      }
+      if (amt > stockMax) {
+        return res.status(400).json({
+          error: `El stock no puede superar el máximo (${stockMax})`,
+        })
+      }
+      newStock = amt
+    } else if (kind === "in") {
+      if (!Number.isFinite(amt) || amt < 1) {
+        return res.status(400).json({ error: "Indica al menos 1 unidad de entrada" })
+      }
+      newStock = Math.min(previousStock + amt, stockMax)
+    } else {
+      if (!Number.isFinite(amt) || amt < 1) {
+        return res.status(400).json({ error: "Indica al menos 1 unidad de salida" })
+      }
+      newStock = Math.max(0, previousStock - amt)
+    }
+
+    await productsCollection.updateOne({ id: productId }, { $set: { currentStock: newStock } })
+    await inventoryMovementsCollection.insertOne({
+      productId,
+      kind,
+      amount: amt,
+      previousStock,
+      newStock,
+      note,
+      createdAt: new Date(),
+    })
+    res.json({ ok: true, currentStock: newStock, previousStock })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "No se pudo registrar el movimiento" })
+  }
+})
+
+app.delete("/api/admin/products/:productId", adminProductsAuth, async (req, res) => {
+  const productId =
+    typeof req.params.productId === "string" ? req.params.productId.trim() : ""
+  if (!productId) {
+    return res.status(400).json({ error: "productId requerido" })
+  }
+  try {
+    const result = await productsCollection.deleteOne({ id: productId })
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Producto no encontrado" })
+    }
+    res.json({ ok: true })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Could not delete product" })
+  }
+})
+
 ensureUploadsDir()
 
 connectMongo()
   .then(() => {
     app.listen(port, () => {
       console.log(`Server listening on http://127.0.0.1:${port}`)
-      console.log(`MongoDB: ${mongoDbName} / ${collectionName}`)
+      console.log(`MongoDB: ${mongoDbName} / ${collectionName}, ${inventoryMovementsCollectionName}`)
     })
   })
   .catch((err) => {
