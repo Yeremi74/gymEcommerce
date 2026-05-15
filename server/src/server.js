@@ -200,19 +200,112 @@ function adminProductsAuth(req, res, next) {
 function stockPairFromDoc(doc) {
   const sm = doc.stockMin
   const sx = doc.stockMax
-  const min = Number.isInteger(sm) && sm >= 0 ? sm : 0
-  let max = Number.isInteger(sx) && sx >= 0 ? sx : min
+  const hasMin = Number.isInteger(sm) && sm >= 0
+  const hasMax = Number.isInteger(sx) && sx >= 0
+  if (!hasMin && !hasMax) {
+    return { stockMin: 0, stockMax: 9999 }
+  }
+  const min = hasMin ? sm : 0
+  let max = hasMax ? sx : min
   if (max < min) max = min
   return { stockMin: min, stockMax: max }
 }
 
+function normalizeSizeKey(size) {
+  return String(size ?? "")
+    .trim()
+    .toUpperCase()
+}
+
+function parseSizesField(raw) {
+  if (raw == null) return []
+  if (Array.isArray(raw)) {
+    return [...new Set(raw.map((s) => normalizeSizeKey(s)).filter(Boolean))]
+  }
+  const s = String(raw).trim()
+  if (!s) return []
+  return [
+    ...new Set(
+      s
+        .split(/[,;]+/)
+        .map((part) => normalizeSizeKey(part))
+        .filter(Boolean),
+    ),
+  ]
+}
+
+function sizesFromDoc(doc) {
+  return parseSizesField(doc.sizes)
+}
+
+function stockBySizeFromDoc(doc) {
+  const sizes = sizesFromDoc(doc)
+  const out = {}
+  for (const sz of sizes) {
+    out[sz] = 0
+  }
+  const raw = doc.stockBySize
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    for (const [key, val] of Object.entries(raw)) {
+      const sz = normalizeSizeKey(key)
+      if (!sz) continue
+      const n = parseInt(val, 10)
+      if (Number.isFinite(n) && n >= 0) {
+        out[sz] = n
+      }
+    }
+  }
+  return out
+}
+
+function totalFromStockBySize(stockBySize) {
+  return Object.values(stockBySize).reduce((sum, n) => sum + (Number.isFinite(n) ? n : 0), 0)
+}
+
 function currentStockFromDoc(doc, pair) {
+  const sizes = sizesFromDoc(doc)
+  if (sizes.length > 0) {
+    const bySize = stockBySizeFromDoc(doc)
+    const total = totalFromStockBySize(bySize)
+    const { stockMax } = pair
+    return Math.min(total, stockMax)
+  }
   const { stockMin, stockMax } = pair
   const cs = doc.currentStock
   if (Number.isInteger(cs) && cs >= 0) {
     return Math.min(cs, stockMax)
   }
   return Math.min(Math.max(0, stockMin), stockMax)
+}
+
+function parseSizeLines(body, productSizes) {
+  const lines = body?.sizeLines
+  if (!Array.isArray(lines) || lines.length === 0) {
+    return null
+  }
+  const parsed = []
+  const seen = new Set()
+  for (const line of lines) {
+    const size = normalizeSizeKey(line?.size)
+    const amt = parseInt(String(line?.amount ?? "").trim(), 10)
+    if (!size || !Number.isFinite(amt) || amt < 1) {
+      continue
+    }
+    if (productSizes.length > 0 && !productSizes.includes(size)) {
+      return {
+        error: `Talla no válida: ${size}. Usa: ${productSizes.join(", ")}`,
+      }
+    }
+    if (seen.has(size)) {
+      return { error: `Talla duplicada: ${size}` }
+    }
+    seen.add(size)
+    parsed.push({ size, amount: amt })
+  }
+  if (parsed.length === 0) {
+    return { error: "Indica al menos una talla con cantidad mayor a 0." }
+  }
+  return { sizeLines: parsed }
 }
 
 function parseStockFields(body) {
@@ -240,6 +333,36 @@ function parseStockFields(body) {
   return { stockMin, stockMax }
 }
 
+function parseProductPrice(raw) {
+  const s = String(raw ?? "")
+    .trim()
+    .replace(/^\$/, "")
+    .replace(/\s/g, "")
+    .replace(",", ".")
+  if (!s) {
+    return { error: "Indica el precio del producto." }
+  }
+  const n = parseFloat(s)
+  if (!Number.isFinite(n) || n <= 0) {
+    return { error: "El precio debe ser un número mayor a 0." }
+  }
+  return { price: `$${n.toFixed(2)}` }
+}
+
+function parseStockFieldsOptional(body, defaults = { stockMin: 0, stockMax: 9999 }) {
+  if (!body || typeof body !== "object") {
+    return defaults
+  }
+  const rawMin = body.stockMin ?? body.stock_min
+  const rawMax = body.stockMax ?? body.stock_max
+  const minStr = rawMin != null && String(rawMin).trim() !== "" ? String(rawMin).trim() : ""
+  const maxStr = rawMax != null && String(rawMax).trim() !== "" ? String(rawMax).trim() : ""
+  if (minStr === "" && maxStr === "") {
+    return defaults
+  }
+  return parseStockFields(body)
+}
+
 function productCreatedTimestamp(doc) {
   if (doc && doc.createdAt instanceof Date) {
     return doc.createdAt.getTime()
@@ -250,7 +373,7 @@ function productCreatedTimestamp(doc) {
   return 0
 }
 
-function docToProduct(doc, catById = null, colById = null) {
+function docToProduct(doc, catById = null, colById = null, unitsSoldByProductId = null) {
   const imageUrls =
     Array.isArray(doc.imageUrls) && doc.imageUrls.length > 0
       ? doc.imageUrls
@@ -288,7 +411,58 @@ function docToProduct(doc, catById = null, colById = null) {
   if (createdMs > 0) {
     out.createdAt = new Date(createdMs).toISOString()
   }
+  if (unitsSoldByProductId) {
+    const sold = unitsSoldByProductId.get(doc.id)
+    if (sold > 0) {
+      out.unitsSold = sold
+    }
+  }
+  const pair = stockPairFromDoc(doc)
+  const sizes = sizesFromDoc(doc)
+  out.currentStock = currentStockFromDoc(doc, pair)
+  if (sizes.length > 0) {
+    out.sizes = sizes
+    out.stockBySize = stockBySizeFromDoc(doc)
+  }
   return out
+}
+
+function docToAdminProduct(doc, catById = null, colById = null) {
+  const pair = stockPairFromDoc(doc)
+  const sizes = sizesFromDoc(doc)
+  const stockBySize = stockBySizeFromDoc(doc)
+  const currentStock = currentStockFromDoc(doc, pair)
+  return {
+    ...docToProduct(doc, catById, colById),
+    stockMin: pair.stockMin,
+    stockMax: pair.stockMax,
+    currentStock,
+    sizes,
+    stockBySize,
+  }
+}
+
+function movementToJson(doc) {
+  return {
+    id: doc._id ? String(doc._id) : undefined,
+    productId: doc.productId,
+    kind: doc.kind,
+    amount: doc.amount,
+    previousStock: doc.previousStock,
+    newStock: doc.newStock,
+    sizeLines: Array.isArray(doc.sizeLines) ? doc.sizeLines : undefined,
+    previousStockBySize:
+      doc.previousStockBySize && typeof doc.previousStockBySize === "object"
+        ? doc.previousStockBySize
+        : undefined,
+    newStockBySize:
+      doc.newStockBySize && typeof doc.newStockBySize === "object"
+        ? doc.newStockBySize
+        : undefined,
+    note: doc.note || "",
+    createdAt:
+      doc.createdAt instanceof Date ? doc.createdAt.toISOString() : doc.createdAt,
+  }
 }
 
 function normalizeProductKind(doc) {
@@ -674,12 +848,29 @@ app.delete("/api/me/cart/items/:productId", authMiddleware, async (req, res) => 
   }
 })
 
+async function unitsSoldByProductIdMap() {
+  const rows = await inventoryMovementsCollection
+    .aggregate([
+      { $match: { kind: "out" } },
+      { $group: { _id: "$productId", unitsSold: { $sum: "$amount" } } },
+    ])
+    .toArray()
+  const map = new Map()
+  for (const row of rows) {
+    if (row._id && row.unitsSold > 0) {
+      map.set(row._id, row.unitsSold)
+    }
+  }
+  return map
+}
+
 app.get("/api/products", async (_req, res) => {
   try {
-    const [docs, catDocs, colDocs] = await Promise.all([
+    const [docs, catDocs, colDocs, unitsSoldMap] = await Promise.all([
       productsCollection.find({}).toArray(),
       categoriesCollection.find({}).toArray(),
       collectionsCollection.find({}).toArray(),
+      unitsSoldByProductIdMap(),
     ])
     const catById = new Map(catDocs.map((c) => [c.id, c]))
     const colById = new Map(colDocs.map((c) => [c.id, c]))
@@ -687,7 +878,7 @@ app.get("/api/products", async (_req, res) => {
     for (const doc of docs) {
       const nk = normalizeProductKind(doc)
       const bucket = bucketKeyForNormalizedKind(nk)
-      payload[bucket].push(docToProduct(doc, catById, colById))
+      payload[bucket].push(docToProduct(doc, catById, colById, unitsSoldMap))
     }
     const shopCategories = catDocs.map((c) => ({
       id: c.id,
@@ -696,7 +887,16 @@ app.get("/api/products", async (_req, res) => {
       description: String(c.description || "").trim(),
       coverImageUrl: c.coverImageUrl || null,
     }))
-    res.json({ ...payload, shopCategories })
+    const shopCollections = colDocs
+      .map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        description: String(c.description || "").trim(),
+        coverImageUrl: c.coverImageUrl || null,
+      }))
+      .sort((a, b) => String(a.name).localeCompare(String(b.name), "es"))
+    res.json({ ...payload, shopCategories, shopCollections })
   } catch {
     res.status(500).json({ error: "Could not read products" })
   }
@@ -920,13 +1120,14 @@ app.post(
   if (!name || !String(name).trim()) {
     return res.status(400).json({ error: "Name required" })
   }
-  if (!price || !String(price).trim()) {
-    return res.status(400).json({ error: "Price required" })
+  const priceParsed = parseProductPrice(price)
+  if (priceParsed.error) {
+    return res.status(400).json({ error: priceParsed.error })
   }
   if (!description || !String(description).trim()) {
     return res.status(400).json({ error: "Description required" })
   }
-  const stockParsed = parseStockFields(req.body)
+  const stockParsed = parseStockFieldsOptional(req.body)
   if (stockParsed.error) {
     return res.status(400).json({ error: stockParsed.error })
   }
@@ -936,6 +1137,12 @@ app.post(
   const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
   const id = `${idPrefix}${suffix}`
   const detailStr = detail ? String(detail).trim() : ""
+  const productSizes = parseSizesField(req.body.sizes)
+  const stockBySizeInit = {}
+  for (const sz of productSizes) {
+    stockBySizeInit[sz] = 0
+  }
+  const initialStock = productSizes.length > 0 ? 0 : stockMin
   try {
     await productsCollection.insertOne({
       kind,
@@ -946,10 +1153,14 @@ app.post(
       detail: detailStr,
       flavor: detailStr,
       sublabel: detailStr,
-      price: String(price).trim(),
+      price: priceParsed.price,
       imageUrl,
       imageUrls,
       description: String(description).trim(),
+      stockMin,
+      stockMax,
+      currentStock: initialStock,
+      ...(productSizes.length > 0 ? { sizes: productSizes, stockBySize: stockBySizeInit } : {}),
       createdAt: new Date(),
     })
     res.status(201).json({ ok: true })
@@ -982,8 +1193,9 @@ app.put(
       if (!name || !String(name).trim()) {
         return res.status(400).json({ error: "Name required" })
       }
-      if (!price || !String(price).trim()) {
-        return res.status(400).json({ error: "Price required" })
+      const priceParsed = parseProductPrice(price)
+      if (priceParsed.error) {
+        return res.status(400).json({ error: priceParsed.error })
       }
       if (!description || !String(description).trim()) {
         return res.status(400).json({ error: "Description required" })
@@ -1005,9 +1217,21 @@ app.put(
         imageUrls = newUrls
         imageUrl = newUrls[0]
       }
+      const productSizes = parseSizesField(
+        req.body.sizes != null ? req.body.sizes : existing.sizes,
+      )
+      let stockBySize = stockBySizeFromDoc(existing)
+      if (productSizes.length > 0) {
+        const merged = {}
+        for (const sz of productSizes) {
+          merged[sz] = Number.isInteger(stockBySize[sz]) ? stockBySize[sz] : 0
+        }
+        stockBySize = merged
+      }
+
       const update = {
         name: String(name).trim(),
-        price: String(price).trim(),
+        price: priceParsed.price,
         description: String(description).trim(),
         imageUrl,
         imageUrls,
@@ -1019,13 +1243,19 @@ app.put(
       } else if (existing.kind === "powder") {
         update.sublabel = detail ? String(detail).trim() : ""
       }
-      const prevCs =
-        Number.isInteger(existing.currentStock) && existing.currentStock >= 0
-          ? existing.currentStock
-          : stockMin
-      let nextCurrent = Math.min(prevCs, stockMax)
-      nextCurrent = Math.max(0, nextCurrent)
-      update.currentStock = nextCurrent
+      if (productSizes.length > 0) {
+        update.sizes = productSizes
+        update.stockBySize = stockBySize
+        update.currentStock = Math.min(totalFromStockBySize(stockBySize), stockMax)
+      } else {
+        const prevCs =
+          Number.isInteger(existing.currentStock) && existing.currentStock >= 0
+            ? existing.currentStock
+            : stockMin
+        let nextCurrent = Math.min(prevCs, stockMax)
+        nextCurrent = Math.max(0, nextCurrent)
+        update.currentStock = nextCurrent
+      }
       await productsCollection.updateOne({ id: productId }, { $set: update })
       res.json({ ok: true })
     } catch (err) {
@@ -1034,6 +1264,54 @@ app.put(
     }
   },
 )
+
+app.get("/api/admin/products", adminProductsAuth, async (_req, res) => {
+  try {
+    const [docs, catDocs, colDocs] = await Promise.all([
+      productsCollection.find({}).sort({ name: 1 }).toArray(),
+      categoriesCollection.find({}).toArray(),
+      collectionsCollection.find({}).toArray(),
+    ])
+    const catById = new Map(catDocs.map((c) => [c.id, c]))
+    const colById = new Map(colDocs.map((c) => [c.id, c]))
+    const products = docs.map((doc) => docToAdminProduct(doc, catById, colById))
+    res.json({ products })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "No se pudieron cargar los productos" })
+  }
+})
+
+app.get("/api/admin/inventory/movements", adminProductsAuth, async (req, res) => {
+  const productId =
+    typeof req.query.productId === "string" ? req.query.productId.trim() : ""
+  const limitRaw = parseInt(String(req.query.limit ?? "100").trim(), 10)
+  const skipRaw = parseInt(String(req.query.skip ?? "0").trim(), 10)
+  const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(1, limitRaw), 200) : 100
+  const skip = Number.isFinite(skipRaw) ? Math.max(0, skipRaw) : 0
+  const filter = productId ? { productId } : {}
+
+  try {
+    const [docs, total] = await Promise.all([
+      inventoryMovementsCollection
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .toArray(),
+      inventoryMovementsCollection.countDocuments(filter),
+    ])
+    res.json({
+      movements: docs.map(movementToJson),
+      total,
+      limit,
+      skip,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "No se pudo cargar el historial" })
+  }
+})
 
 app.patch("/api/admin/products/:productId/inventory", adminProductsAuth, async (req, res) => {
   const productId =
@@ -1089,10 +1367,59 @@ app.post("/api/admin/inventory/movements", adminProductsAuth, async (req, res) =
     }
     const pair = stockPairFromDoc(doc)
     const { stockMax } = pair
+    const productSizes = sizesFromDoc(doc)
     const previousStock = currentStockFromDoc(doc, pair)
+    const previousStockBySize = stockBySizeFromDoc(doc)
+    const sizeLinesParsed = parseSizeLines(req.body, productSizes)
 
     let newStock
-    if (kind === "set") {
+    let newStockBySize = { ...previousStockBySize }
+    let movementAmount = amt
+    let movementSizeLines = null
+
+    if (productSizes.length > 0) {
+      if (!sizeLinesParsed || sizeLinesParsed.error) {
+        return res.status(400).json({
+          error:
+            sizeLinesParsed?.error ||
+            "Este producto usa tallas. Indica cantidades por talla.",
+        })
+      }
+      const { sizeLines } = sizeLinesParsed
+      movementSizeLines = sizeLines
+      movementAmount = sizeLines.reduce((sum, line) => sum + line.amount, 0)
+
+      for (const { size, amount } of sizeLines) {
+        const prevSize = previousStockBySize[size] ?? 0
+        if (kind === "in") {
+          newStockBySize[size] = prevSize + amount
+        } else if (kind === "out") {
+          if (prevSize < amount) {
+            return res.status(400).json({
+              error: `Stock insuficiente en talla ${size} (disponible: ${prevSize})`,
+            })
+          }
+          newStockBySize[size] = prevSize - amount
+        } else {
+          newStockBySize[size] = amount
+        }
+      }
+      newStock = totalFromStockBySize(newStockBySize)
+      if (kind === "in" && newStock > stockMax) {
+        return res.status(400).json({
+          error: `El stock total no puede superar el máximo (${stockMax})`,
+        })
+      }
+      if (kind === "set" && newStock > stockMax) {
+        return res.status(400).json({
+          error: `El stock total no puede superar el máximo (${stockMax})`,
+        })
+      }
+    } else if (sizeLinesParsed?.sizeLines) {
+      return res.status(400).json({
+        error: "Este producto no tiene tallas configuradas. Usa cantidad total o edita el producto.",
+      })
+    } else if (kind === "set") {
       if (!Number.isFinite(amt) || amt < 0) {
         return res.status(400).json({ error: "Indica un stock válido (entero ≥ 0)" })
       }
@@ -1111,20 +1438,42 @@ app.post("/api/admin/inventory/movements", adminProductsAuth, async (req, res) =
       if (!Number.isFinite(amt) || amt < 1) {
         return res.status(400).json({ error: "Indica al menos 1 unidad de salida" })
       }
+      if (previousStock < amt) {
+        return res.status(400).json({
+          error: `Stock insuficiente (disponible: ${previousStock})`,
+        })
+      }
       newStock = Math.max(0, previousStock - amt)
     }
 
-    await productsCollection.updateOne({ id: productId }, { $set: { currentStock: newStock } })
+    const productUpdate = { currentStock: newStock }
+    if (productSizes.length > 0) {
+      productUpdate.stockBySize = newStockBySize
+    }
+
+    await productsCollection.updateOne({ id: productId }, { $set: productUpdate })
     await inventoryMovementsCollection.insertOne({
       productId,
       kind,
-      amount: amt,
+      amount: movementAmount,
       previousStock,
       newStock,
+      ...(movementSizeLines
+        ? {
+            sizeLines: movementSizeLines,
+            previousStockBySize,
+            newStockBySize,
+          }
+        : {}),
       note,
       createdAt: new Date(),
     })
-    res.json({ ok: true, currentStock: newStock, previousStock })
+    res.json({
+      ok: true,
+      currentStock: newStock,
+      previousStock,
+      stockBySize: productSizes.length > 0 ? newStockBySize : undefined,
+    })
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: "No se pudo registrar el movimiento" })

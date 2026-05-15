@@ -63,6 +63,21 @@ function IconProducts() {
   )
 }
 
+function IconInventory() {
+  return (
+    <IconNav>
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8m18 0v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3m18 0H3m6-4v4m4-4v4"
+      />
+    </IconNav>
+  )
+}
+
 function IconStore() {
   return (
     <IconNav>
@@ -150,6 +165,10 @@ export default function AdminLayout() {
             <NavLink to="/admin/productos" className={navClass} end title="Productos">
               <IconProducts />
               <span className={layoutStyles.navLabel}>Productos</span>
+            </NavLink>
+            <NavLink to="/admin/inventario" className={navClass} end title="Inventario">
+              <IconInventory />
+              <span className={layoutStyles.navLabel}>Inventario</span>
             </NavLink>
           </nav>
           <div className={layoutStyles.sidebarFoot}>

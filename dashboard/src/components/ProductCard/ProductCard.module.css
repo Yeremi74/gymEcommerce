@@ -45,6 +45,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: opacity 0.2s ease;
 }
 
 .badge {
@@ -63,6 +64,46 @@
   border-radius: 4px;
 }
 
+.carouselControls {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.carouselBtn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(12, 12, 13, 0.18);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.carouselBtn:hover {
+  background: #fff;
+  transform: scale(1.04);
+}
+
+.carouselBtn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 .overlayActions {
   position: absolute;
   top: 0;
@@ -74,7 +115,7 @@
   justify-content: flex-end;
   padding: 10px;
   pointer-events: none;
-  z-index: 3;
+  z-index: 5;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -87,6 +128,41 @@
   .root:focus-within .overlayActions {
     opacity: 1;
   }
+
+  .root:hover .carouselControls,
+  .root:focus-within .carouselControls {
+    opacity: 1;
+  }
+
+  .body {
+    position: relative;
+    min-height: 3.25rem;
+  }
+
+  .bodyDefault {
+    transition: opacity 0.18s ease;
+  }
+
+  .bodyHover {
+    position: absolute;
+    inset: 12px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+
+  .root:hover .bodyDefault,
+  .root:focus-within .bodyDefault {
+    opacity: 0;
+  }
+
+  .root:hover .bodyHover,
+  .root:focus-within .bodyHover {
+    opacity: 1;
+  }
 }
 
 .body {
@@ -95,6 +171,25 @@
   flex-direction: column;
   gap: 4px;
   align-items: flex-start;
+}
+
+.bodyDefault {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.bodyHover {
+  display: none;
+  width: 100%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bodyHover {
+    display: flex;
+  }
 }
 
 .title {
@@ -113,4 +208,49 @@
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: var(--ink);
+}
+
+.sizesLabel {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sizeList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sizeChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  padding: 4px 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bgElevated);
+  color: var(--ink);
+}
+
+.sizeAvailable {
+  border-color: color-mix(in srgb, var(--ink) 18%, var(--line));
+}
+
+.sizeUnavailable {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  opacity: 0.72;
+  background: transparent;
 }

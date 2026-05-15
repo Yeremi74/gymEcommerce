@@ -45,9 +45,11 @@ function normalizeApiPayload(raw) {
       hoodies: [],
       tees: [],
       shopCategories: [],
+      shopCollections: [],
     }
   }
   const shopCategories = Array.isArray(raw.shopCategories) ? raw.shopCategories : []
+  const shopCollections = Array.isArray(raw.shopCollections) ? raw.shopCollections : []
   if (Array.isArray(raw.bars) || Array.isArray(raw.powder)) {
     return {
       trending: Array.isArray(raw.bars) ? raw.bars : [],
@@ -55,6 +57,7 @@ function normalizeApiPayload(raw) {
       hoodies: Array.isArray(raw.powder) ? raw.powder : [],
       tees: [],
       shopCategories,
+      shopCollections,
     }
   }
   return {
@@ -63,6 +66,7 @@ function normalizeApiPayload(raw) {
     hoodies: Array.isArray(raw.hoodies) ? raw.hoodies : [],
     tees: Array.isArray(raw.tees) ? raw.tees : [],
     shopCategories,
+    shopCollections,
   }
 }
 
@@ -73,6 +77,7 @@ export function ProductsProvider({ children }) {
     hoodies: [],
     tees: [],
     shopCategories: [],
+    shopCollections: [],
   })
   const [loaded, setLoaded] = useState(false)
 
@@ -91,6 +96,7 @@ export function ProductsProvider({ children }) {
           hoodies: [],
           tees: [],
           shopCategories: [],
+          shopCollections: [],
         }),
       )
   }, [])
@@ -131,6 +137,11 @@ export function ProductsProvider({ children }) {
     [extra.shopCategories],
   )
 
+  const shopCollections = useMemo(
+    () => (Array.isArray(extra.shopCollections) ? extra.shopCollections : []),
+    [extra.shopCollections],
+  )
+
   const allProductsFlat = useMemo(() => {
     const seen = new Map()
     for (const key of productCategoryKeys) {
@@ -149,10 +160,13 @@ export function ProductsProvider({ children }) {
     return [...pool].sort((a, b) => parseCreatedAtMs(b) - parseCreatedAtMs(a))
   }, [allProductsFlat])
 
-  /** Sin métricas de ventas aún: se usa la selección “en tendencia” como proxy. */
+  /** Productos con más unidades vendidas (salidas de inventario en admin). */
   const bestsellerProductsForLanding = useMemo(
-    () => [...trendingProducts].slice(0, 12),
-    [trendingProducts],
+    () =>
+      [...allProductsFlat]
+        .sort((a, b) => (b.unitsSold ?? 0) - (a.unitsSold ?? 0))
+        .slice(0, 12),
+    [allProductsFlat],
   )
 
   const getProductById = useCallback(
@@ -199,6 +213,7 @@ export function ProductsProvider({ children }) {
       hoodiesProducts,
       teesProducts,
       shopCategories,
+      shopCollections,
       allProductsFlat,
       recentProductsForLanding,
       bestsellerProductsForLanding,
@@ -214,6 +229,7 @@ export function ProductsProvider({ children }) {
       hoodiesProducts,
       teesProducts,
       shopCategories,
+      shopCollections,
       allProductsFlat,
       recentProductsForLanding,
       bestsellerProductsForLanding,

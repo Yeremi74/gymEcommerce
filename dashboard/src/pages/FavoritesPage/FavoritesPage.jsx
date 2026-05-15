@@ -95,7 +95,7 @@ export default function FavoritesPage() {
             <p className={styles.emptyText}>
               Pulsa el corazón en un producto para añadirlo a esta lista.
             </p>
-            <Link className={styles.primaryCta} to="/">
+            <Link className={styles.primaryCta} to="/tienda">
               Explorar catálogo
             </Link>
           </div>

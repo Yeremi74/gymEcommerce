@@ -1,21 +1,14 @@
 import { clientConfig } from "./clientConfig.js"
+import { getClientBrowserTitle, getClientFaviconHref } from "./clientBranding.js"
 
 export function applyClientTheme() {
   const root = document.documentElement
   root.style.setProperty("--accent", clientConfig.accent)
   root.style.setProperty("--accentInk", clientConfig.accentInk)
 
-  if (typeof clientConfig.browserTitle === "string" && clientConfig.browserTitle.trim()) {
-    document.title = clientConfig.browserTitle.trim()
-  }
+  document.title = getClientBrowserTitle()
 
-  const iconHref =
-    typeof clientConfig.faviconUrl === "string" && clientConfig.faviconUrl.trim()
-      ? clientConfig.faviconUrl.trim()
-      : typeof clientConfig.logoUrl === "string" && clientConfig.logoUrl.trim()
-        ? clientConfig.logoUrl.trim()
-        : ""
-
+  const iconHref = getClientFaviconHref()
   if (iconHref) {
     let link = document.querySelector('link[rel="icon"]')
     if (!link) {

@@ -48,7 +48,7 @@ export default function ProductTypesCarousel({ categories }) {
               <article key={cat.id} className={styles.card} id={`categoria-${cat.slug}`}>
                 <Link
                   className={styles.cardLink}
-                  to={{ pathname: "/", hash: `categoria-${cat.slug}` }}
+                  to={`/tienda?categoria=${encodeURIComponent(cat.id)}`}
                 >
                   <div className={styles.media}>
                     {cat.coverImageUrl ? (

@@ -1,0 +1,62 @@
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: clip;
+}
+
+.heroTitle {
+  margin: 0;
+  font-family: var(--fontDisplay);
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  letter-spacing: 0.05em;
+  line-height: 1.05;
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 2px 28px rgba(12, 12, 13, 0.5);
+  text-transform: uppercase;
+}
+
+.status {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - 5rem);
+  padding: calc(4.25rem + 32px) var(--space) 48px;
+  text-align: center;
+}
+
+.statusTitle {
+  margin: 0 0 12px;
+  font-family: var(--fontDisplay);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  letter-spacing: 0.04em;
+}
+
+.statusText {
+  margin: 0 0 24px;
+  max-width: 36rem;
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.statusLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: var(--accent);
+  color: var(--accentInk);
+  transition: filter 0.15s ease;
+}
+
+.statusLink:hover {
+  filter: brightness(0.97);
+}

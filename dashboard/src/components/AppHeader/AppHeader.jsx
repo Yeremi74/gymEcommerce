@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react"
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { Link } from "react-router-dom"
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { clientConfig } from "../../config/clientConfig.js"
 import { resolveAssetUrl } from "../../config/apiBase.js"
 import { useAuth } from "../../context/AuthContext"
@@ -90,10 +90,18 @@ function parseUsdNumber(raw) {
 /**
  * @param {object} [props]
  * @param {"default" | "landing"} [props.variant]
+ * @param {boolean} [props.landingSolid] navbar landing siempre en modo sólido (sin hero)
  */
-export default function AppHeader({ variant = "default" }) {
+export default function AppHeader({ variant = "default", landingSolid = false }) {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const isNuevosShopView =
+    location.pathname === "/tienda" && searchParams.get("vista") === "nuevos"
+  const isShopCatalogView = location.pathname === "/tienda" && !isNuevosShopView
+  const isCollectionsView = location.pathname === "/colecciones"
   const { user, logout } = useAuth()
-  const { getProductById } = useProducts()
+  const { getProductById, allProductsFlat } = useProducts()
   const {
     favoriteProductIds,
     cartItems,
@@ -101,16 +109,22 @@ export default function AppHeader({ variant = "default" }) {
     cartUnitsTotal,
   } = useUserLists()
   const [panel, setPanel] = useState(null)
-  const [landingSurface, setLandingSurface] = useState("hero")
+  const [landingSearchOpen, setLandingSearchOpen] = useState(false)
+  const [landingSearchQuery, setLandingSearchQuery] = useState("")
+  const [landingSurface, setLandingSurface] = useState(
+    variant === "landing" && landingSolid ? "solid" : "hero",
+  )
   const lastScrollY = useRef(0)
   const heroEndY = useRef(520)
+  const landingSearchInputRef = useRef(null)
+  const landingSearchPanelRef = useRef(null)
   const titleId = useId()
   const panelRegionId = `${titleId}-region`
 
   const closePanel = useCallback(() => setPanel(null), [])
 
   useEffect(() => {
-    if (variant !== "landing") return undefined
+    if (variant !== "landing" || landingSolid) return undefined
 
     const readHeroEnd = () => {
       const hero = document.getElementById("landing-hero")
@@ -152,7 +166,48 @@ export default function AppHeader({ variant = "default" }) {
       window.removeEventListener("scroll", onScroll)
       window.removeEventListener("resize", onResize)
     }
-  }, [variant])
+  }, [variant, landingSolid])
+
+  useEffect(() => {
+    if (variant === "landing" && landingSolid) {
+      setLandingSurface("solid")
+    }
+  }, [variant, landingSolid])
+
+  const closeLandingSearch = useCallback(() => {
+    setLandingSearchOpen(false)
+    setLandingSearchQuery("")
+  }, [])
+
+  const landingSearchResults = useMemo(() => {
+    const q = landingSearchQuery.trim().toLowerCase()
+    if (!q) return []
+    return allProductsFlat
+      .filter((p) => p?.name && String(p.name).toLowerCase().includes(q))
+      .slice(0, 6)
+  }, [allProductsFlat, landingSearchQuery])
+
+  useEffect(() => {
+    if (!landingSearchOpen) return undefined
+    const onKey = (e) => {
+      if (e.key === "Escape") closeLandingSearch()
+    }
+    const onPointerDown = (e) => {
+      const panel = landingSearchPanelRef.current
+      const input = landingSearchInputRef.current
+      if (panel?.contains(e.target) || input?.contains(e.target)) return
+      if (e.target.closest?.("[data-landing-search-trigger]")) return
+      closeLandingSearch()
+    }
+    window.addEventListener("keydown", onKey)
+    document.addEventListener("pointerdown", onPointerDown)
+    const t = window.setTimeout(() => landingSearchInputRef.current?.focus(), 0)
+    return () => {
+      window.removeEventListener("keydown", onKey)
+      document.removeEventListener("pointerdown", onPointerDown)
+      window.clearTimeout(t)
+    }
+  }, [landingSearchOpen, closeLandingSearch])
 
   useEffect(() => {
     if (!panel) return undefined
@@ -443,24 +498,42 @@ export default function AppHeader({ variant = "default" }) {
 
   const onLandingSearch = (e) => {
     e.preventDefault()
-    const el = document.getElementById("tienda")
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
+    const first = landingSearchResults[0]
+    if (first) {
+      navigate(`/products/${first.id}`)
+      closeLandingSearch()
+      return
+    }
+    navigate("/tienda")
   }
+
+  const toggleLandingSearch = () => {
+    setLandingSearchOpen((open) => {
+      if (open) {
+        setLandingSearchQuery("")
+        return false
+      }
+      return true
+    })
+  }
+
+  const resolvedLandingSurface = landingSolid ? "solid" : landingSurface
 
   const headerSurfaceClass =
     variant === "landing"
-      ? landingSurface === "hero"
+      ? resolvedLandingSurface === "hero"
         ? styles.rootLandingHero
         : styles.rootLandingSolid
       : styles.surfaceDefault
 
   return (
     <header
-      className={`${styles.root} ${variant === "landing" ? styles.landingDocked : ""} ${headerSurfaceClass}`}
+      className={`${styles.root} ${variant === "landing" ? styles.landingDocked : ""} ${headerSurfaceClass} ${variant === "landing" && landingSearchOpen ? styles.landingSearchActive : ""}`}
     >
       {drawer}
       {variant === "landing" ? (
-        <div className={styles.innerLanding}>
+        <div className={styles.landingShell}>
+          <div className={styles.innerLanding}>
           <Link to="/" className={styles.logo}>
             {clientConfig.logoUrl?.trim() ? (
               <img
@@ -475,38 +548,115 @@ export default function AppHeader({ variant = "default" }) {
             <span className={styles.logoText}>{clientConfig.siteName}</span>
           </Link>
           <nav className={styles.navLinks} aria-label="Secciones">
-            <Link className={styles.navLink} to="/#tienda">
+            <Link
+              className={`${styles.navLink} ${isShopCatalogView ? styles.navLinkActive : ""}`}
+              to="/tienda"
+              aria-current={isShopCatalogView ? "page" : undefined}
+            >
               Tienda
             </Link>
-            <Link className={styles.navLink} to="/#colecciones">
+            <Link
+              className={`${styles.navLink} ${isCollectionsView ? styles.navLinkActive : ""}`}
+              to="/colecciones"
+              aria-current={isCollectionsView ? "page" : undefined}
+            >
               Colecciones
             </Link>
-            <Link className={styles.navLink} to="/#nuevos">
+            <Link
+              className={`${styles.navLink} ${isNuevosShopView ? styles.navLinkActive : ""}`}
+              to="/tienda?vista=nuevos"
+              aria-current={isNuevosShopView ? "page" : undefined}
+            >
               Nuevos
             </Link>
           </nav>
-          <div className={styles.search}>
-            <form className={styles.searchForm} role="search" onSubmit={onLandingSearch}>
-              <div className={styles.searchWrap}>
-                <span className={styles.searchIcon}>
-                  <IconSearchGlyph />
-                </span>
-                <input
-                  className={styles.searchField}
-                  type="search"
-                  name="q"
-                  placeholder="Buscar"
-                  aria-label="Buscar"
-                  autoComplete="off"
-                />
-              </div>
-            </form>
-          </div>
+          <button
+            type="button"
+            className={styles.searchTrigger}
+            data-landing-search-trigger
+            aria-expanded={landingSearchOpen}
+            aria-controls={landingSearchOpen ? `${titleId}-landing-search` : undefined}
+            onClick={toggleLandingSearch}
+          >
+            <span className={styles.searchTriggerLabel}>Buscar</span>
+            {!landingSearchOpen ? (
+              <span className={styles.searchTriggerCursor} aria-hidden />
+            ) : null}
+          </button>
           <nav className={styles.navActions} aria-label="Cuenta y listas">
             {profileControl}
             {favoritesBtn}
             {cartBtn}
           </nav>
+          </div>
+
+          {landingSearchOpen ? (
+            <div
+              ref={landingSearchPanelRef}
+              id={`${titleId}-landing-search`}
+              className={styles.landingSearchPanel}
+              role="search"
+            >
+              <form className={styles.landingSearchForm} onSubmit={onLandingSearch}>
+                <div className={styles.landingSearchFieldWrap}>
+                  <span className={styles.searchIcon}>
+                    <IconSearchGlyph />
+                  </span>
+                  <input
+                    ref={landingSearchInputRef}
+                    className={styles.landingSearchInput}
+                    type="search"
+                    name="q"
+                    value={landingSearchQuery}
+                    onChange={(e) => setLandingSearchQuery(e.target.value)}
+                    placeholder="Buscar productos"
+                    aria-label="Buscar productos"
+                    autoComplete="off"
+                  />
+                </div>
+              </form>
+
+              {landingSearchQuery.trim() ? (
+                <div className={styles.landingSearchResults}>
+                  {landingSearchResults.length === 0 ? (
+                    <p className={styles.landingSearchEmpty}>Sin resultados</p>
+                  ) : (
+                    <ul className={styles.landingSearchList}>
+                      {landingSearchResults.map((product) => (
+                        <li key={product.id}>
+                          <Link
+                            className={styles.landingSearchResult}
+                            to={`/products/${product.id}`}
+                            onClick={closeLandingSearch}
+                          >
+                            {product.imageUrl ? (
+                              <img
+                                className={styles.landingSearchThumb}
+                                src={resolveAssetUrl(product.imageUrl)}
+                                alt=""
+                                width={40}
+                                height={40}
+                              />
+                            ) : (
+                              <span className={styles.landingSearchThumbPlaceholder} />
+                            )}
+                            <span className={styles.landingSearchResultText}>
+                              <span className={styles.landingSearchResultName}>
+                                {product.name}
+                              </span>
+                              <span className={styles.landingSearchResultPrice}>
+                                {formatPriceUsd(product.price)}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       ) : (
         <div className={styles.inner}>

@@ -60,6 +60,37 @@
   gap: 8px;
 }
 
+.fieldHint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.priceInputWrap {
+  display: flex;
+  align-items: stretch;
+  max-width: 280px;
+}
+
+.pricePrefix {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-weight: 700;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+
+.priceInput {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  flex: 1;
+  min-width: 0;
+}
+
 .label {
   font-size: 0.8125rem;
   font-weight: 600;

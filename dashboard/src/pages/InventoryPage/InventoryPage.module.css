@@ -256,3 +256,86 @@
   color: var(--muted);
   font-size: 0.9375rem;
 }
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.tab,
+.tabActive {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--bgElevated);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 25%, var(--line));
+}
+
+.tabActive {
+  background: var(--accent);
+  color: var(--accentInk);
+  border-color: var(--accent);
+}
+
+.historyFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 20px;
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+
+.historyFilters .field {
+  flex: 1;
+  min-width: min(100%, 220px);
+}
+
+.noteCell {
+  max-width: 200px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  word-break: break-word;
+}
+
+.sizeSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sizeSectionTitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.sizeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px 16px;
+}
+
+.sizeField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sizeLabel {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

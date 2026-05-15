@@ -20,6 +20,8 @@ import { useProducts } from "../../context/ProductsContext"
 import { useAuth } from "../../context/AuthContext"
 import { useAdminTaxonomy } from "../../context/AdminTaxonomyContext"
 import { apiUrl } from "../../config/apiBase.js"
+import { parseProductPrice } from "../../utils/parseProductPrice.js"
+import { parseSizesInput } from "../../utils/parseSizes.js"
 import styles from "../AdminPage/AdminPage.module.css"
 
 function SortableImageItem({ id, previewUrl, onRemove }) {
@@ -73,6 +75,7 @@ export default function AdminProductNewPage() {
   const [name, setName] = useState("")
   const [price, setPrice] = useState("")
   const [detail, setDetail] = useState("")
+  const [sizes, setSizes] = useState("")
   const [description, setDescription] = useState("")
   const [images, setImages] = useState([])
   const [fileKey, setFileKey] = useState(0)
@@ -144,6 +147,11 @@ export default function AdminProductNewPage() {
       setStatus("Añade al menos una imagen.")
       return
     }
+    const priceParsed = parseProductPrice(price)
+    if (priceParsed.error) {
+      setStatus(priceParsed.error)
+      return
+    }
     setSubmitting(true)
     setStatus("")
     try {
@@ -151,8 +159,12 @@ export default function AdminProductNewPage() {
       body.append("categoryId", productCategoryId)
       body.append("collectionId", productCollectionId)
       body.append("name", name)
-      body.append("price", price)
+      body.append("price", priceParsed.value)
       body.append("detail", detail)
+      const sizesList = parseSizesInput(sizes)
+      if (sizesList.length > 0) {
+        body.append("sizes", sizesList.join(", "))
+      }
       body.append("description", description)
       for (const item of images) {
         body.append("images", item.file)
@@ -171,6 +183,7 @@ export default function AdminProductNewPage() {
       setName("")
       setPrice("")
       setDetail("")
+      setSizes("")
       setDescription("")
       setImages((prev) => {
         prev.forEach((img) => URL.revokeObjectURL(img.previewUrl))
@@ -210,8 +223,9 @@ export default function AdminProductNewPage() {
     <div className={styles.shell}>
       <h1 className={styles.title}>Nuevo producto</h1>
       <p className={styles.lead}>
-        Elige tipo de ropa y colección, sube imágenes y completa los datos. Creá
-        tipos de ropa y colecciones desde el menú lateral si aún no existen.
+        Elige tipo de ropa y colección, indica el precio de venta, sube imágenes y
+        completa los datos. Creá tipos de ropa y colecciones desde el menú lateral si
+        aún no existen.
       </p>
 
       <form className={styles.form} onSubmit={handleSubmit}>
@@ -246,13 +260,30 @@ export default function AdminProductNewPage() {
             />
           </label>
           <label className={styles.field}>
-            <span className={styles.label}>Precio (ej. $29.90)</span>
-            <input
-              className={styles.input}
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              required
-            />
+            <span className={styles.label}>Precio de venta</span>
+            <div className={styles.priceInputWrap}>
+              <span className={styles.pricePrefix} aria-hidden="true">
+                $
+              </span>
+              <input
+                className={[styles.input, styles.priceInput].join(" ")}
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                onBlur={() => {
+                  const parsed = parseProductPrice(price)
+                  if (!parsed.error) setPrice(parsed.value.replace(/^\$/, ""))
+                }}
+                placeholder="29.90"
+                required
+                aria-describedby="product-price-hint"
+              />
+            </div>
+            <span id="product-price-hint" className={styles.fieldHint}>
+              Obligatorio. Se muestra en la tienda con formato $29.90.
+            </span>
           </label>
         </div>
         <label className={styles.field}>
@@ -262,6 +293,20 @@ export default function AdminProductNewPage() {
             value={detail}
             onChange={(e) => setDetail(e.target.value)}
           />
+        </label>
+        <label className={styles.field}>
+          <span className={styles.label}>Tallas disponibles (opcional)</span>
+          <input
+            className={styles.input}
+            value={sizes}
+            onChange={(e) => setSizes(e.target.value)}
+            placeholder="XS, S, M, L, XL"
+            aria-describedby="product-sizes-hint"
+          />
+          <span id="product-sizes-hint" className={styles.fieldHint}>
+            Separa con comas. Si las defines, el inventario se gestiona por talla
+            (entradas y salidas).
+          </span>
         </label>
         <label className={styles.field}>
           <span className={styles.label}>Descripción</span>

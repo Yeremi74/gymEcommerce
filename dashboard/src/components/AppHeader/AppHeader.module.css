@@ -55,17 +55,35 @@
   color: #121213;
 }
 
-.rootLandingHero .searchWrap {
+.rootLandingHero .landingSearchFieldWrap {
   border-color: rgba(255, 255, 255, 0.35);
   background: rgba(255, 255, 255, 0.1);
 }
 
-.rootLandingHero .searchField::placeholder {
+.rootLandingHero .landingSearchInput::placeholder {
   color: rgba(255, 255, 255, 0.55);
 }
 
 .rootLandingHero .searchIcon {
   color: rgba(255, 255, 255, 0.75);
+}
+
+.rootLandingHero .searchTrigger {
+  color: #fff;
+}
+
+.rootLandingHero .landingSearchPanel {
+  background: rgba(12, 12, 13, 0.42);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.rootLandingHero .landingSearchResult:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rootLandingHero.landingSearchActive {
+  background: rgba(12, 12, 13, 0.42);
+  backdrop-filter: blur(12px);
 }
 
 .rootLandingSolid {
@@ -107,17 +125,30 @@
   color: #fff;
 }
 
-.rootLandingSolid .searchWrap {
+.rootLandingSolid .landingSearchFieldWrap {
   border-color: rgba(18, 18, 19, 0.12);
   background: rgba(18, 18, 19, 0.04);
 }
 
-.rootLandingSolid .searchField::placeholder {
+.rootLandingSolid .landingSearchInput::placeholder {
   color: rgba(18, 18, 19, 0.45);
 }
 
 .rootLandingSolid .searchIcon {
   color: rgba(18, 18, 19, 0.55);
+}
+
+.rootLandingSolid .searchTrigger {
+  color: #121213;
+}
+
+.rootLandingSolid .landingSearchPanel {
+  background: #fff;
+  border-color: rgba(18, 18, 19, 0.1);
+}
+
+.rootLandingSolid .landingSearchResult:hover {
+  background: rgba(18, 18, 19, 0.04);
 }
 
 .inner {
@@ -128,6 +159,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+.landingShell {
+  width: 100%;
 }
 
 .innerLanding {
@@ -164,9 +199,10 @@
     grid-row: 2;
   }
 
-  .innerLanding > .search {
+  .innerLanding > .searchTrigger {
     grid-column: 1 / -1;
     grid-row: 3;
+    justify-self: start;
   }
 }
 
@@ -196,38 +232,113 @@
   outline-offset: 2px;
 }
 
+.navLinkActive {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+}
+
 .rootLandingHero .navLink:focus-visible {
   outline-color: #fff;
 }
 
-.search {
-  flex: 1 1 200px;
-  min-width: 120px;
-  max-width: 360px;
+.searchTrigger {
+  flex: 1 1 120px;
+  min-width: 0;
+  max-width: 200px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
 }
 
-.searchForm {
+.searchTrigger:hover {
+  opacity: 0.82;
+}
+
+.searchTrigger:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.searchTriggerLabel {
+  line-height: 1.2;
+}
+
+.searchTriggerCursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 2px;
+  background: currentColor;
+  vertical-align: text-bottom;
+  animation: searchCursorBlink 1s step-end infinite;
+}
+
+@keyframes searchCursorBlink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.landingSearchPanel {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--space) 12px;
+  border-top: 1px solid transparent;
+  animation: landingSearchPanelIn 0.22s ease forwards;
+}
+
+@keyframes landingSearchPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landingSearchForm {
   width: 100%;
 }
 
-.searchWrap {
+.landingSearchFieldWrap {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 0 12px;
-  height: 40px;
-  border-radius: 12px;
+  height: 44px;
+  border-radius: 12px 12px 0 0;
   border: 1px solid rgba(18, 18, 19, 0.12);
+  border-bottom: none;
   background: rgba(18, 18, 19, 0.04);
 }
 
-.searchIcon {
-  flex-shrink: 0;
-  display: flex;
-  color: var(--muted);
+.landingSearchResults {
+  border: 1px solid rgba(18, 18, 19, 0.12);
+  border-top: 1px solid rgba(18, 18, 19, 0.08);
+  border-radius: 0 0 12px 12px;
+  background: inherit;
+  overflow: hidden;
 }
 
-.searchField {
+.landingSearchInput {
   flex: 1;
   min-width: 0;
   border: none;
@@ -236,6 +347,83 @@
   font-size: 0.875rem;
   color: inherit;
   outline: none;
+}
+
+.landingSearchFieldWrap:only-child,
+.landingSearchForm:has(+ .landingSearchResults) .landingSearchFieldWrap {
+  border-radius: 12px 12px 0 0;
+}
+
+.landingSearchForm:not(:has(+ .landingSearchResults)) .landingSearchFieldWrap {
+  border-radius: 12px;
+  border-bottom: 1px solid rgba(18, 18, 19, 0.12);
+}
+
+.landingSearchEmpty {
+  margin: 0;
+  padding: 14px 12px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.landingSearchList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.landingSearchResult {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+
+.landingSearchThumb {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(18, 18, 19, 0.08);
+}
+
+.landingSearchThumbPlaceholder {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(18, 18, 19, 0.08);
+}
+
+.landingSearchResultText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.landingSearchResultName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.landingSearchResultPrice {
+  font-size: 0.8125rem;
+  opacity: 0.72;
+}
+
+.searchIcon {
+  flex-shrink: 0;
+  display: flex;
+  color: var(--muted);
 }
 
 .navActions {
@@ -268,9 +456,10 @@
     grid-row: 2;
   }
 
-  .innerLanding > .search {
+  .innerLanding > .searchTrigger {
     grid-column: 1 / -1;
     grid-row: 3;
+    justify-self: start;
   }
 }
 
