@@ -1,0 +1,128 @@
+.root {
+  width: 100%;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 5.75rem;
+}
+
+.stone {
+  background: #ebeae6;
+}
+
+.canvas {
+  background: var(--bg);
+}
+
+.inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: calc(var(--space) * 1.15) var(--space) calc(var(--space) * 1.5);
+}
+
+.head {
+  margin: 0 0 clamp(20px, 3vw, 28px);
+}
+
+.title {
+  margin: 0 0 8px;
+  font-family: var(--fontDisplay);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  letter-spacing: 0.04em;
+}
+
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  max-width: 52ch;
+  line-height: 1.45;
+}
+
+.empty {
+  margin: 0;
+  padding: 28px 0 8px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.skeletonBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.gridTop {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(14px, 2.5vw, 24px);
+  align-items: stretch;
+}
+
+.gridMini {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+
+.promo {
+  position: relative;
+  border-radius: calc(var(--radius) * 1.25);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  min-height: 280px;
+}
+
+.promoImg {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+.cardPlaceholder {
+  border-radius: calc(var(--radius) * 0.75);
+  border: 1px dashed color-mix(in srgb, var(--line) 85%, var(--ink));
+  background: color-mix(in srgb, var(--bg) 88%, var(--ink));
+  min-height: 0;
+  aspect-ratio: 4 / 5;
+}
+
+@media (max-width: 960px) {
+  .gridTop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .split {
+    grid-template-columns: 1fr;
+  }
+
+  .promo {
+    min-height: 220px;
+    order: -1;
+  }
+
+  .promoImg {
+    min-height: 220px;
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 540px) {
+  .gridTop {
+    gap: 10px;
+  }
+
+  .gridMini {
+    gap: 10px;
+  }
+}

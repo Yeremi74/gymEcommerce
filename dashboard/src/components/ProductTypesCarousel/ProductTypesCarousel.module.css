@@ -1,0 +1,131 @@
+.root {
+  width: 100%;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  scroll-margin-top: 5.75rem;
+}
+
+.inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: calc(var(--space) * 1.15) var(--space) calc(var(--space) * 1.45);
+}
+
+.head {
+  margin: 0 0 clamp(16px, 2.5vw, 22px);
+}
+
+.title {
+  margin: 0 0 8px;
+  font-family: var(--fontDisplay);
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  letter-spacing: 0.04em;
+}
+
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  max-width: 60ch;
+  line-height: 1.45;
+}
+
+.empty {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.track {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px 2px 12px;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space);
+  -webkit-overflow-scrolling: touch;
+}
+
+.track:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.card {
+  flex: 0 0 clamp(200px, 42vw, 260px);
+  scroll-snap-align: start;
+  scroll-margin-top: 5.75rem;
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  border-radius: calc(var(--radius) * 1.25);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bgElevated);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.cardLink:hover {
+  border-color: color-mix(in srgb, var(--ink) 22%, var(--line));
+  box-shadow: 0 10px 30px rgba(12, 12, 13, 0.08);
+  transform: translateY(-2px);
+}
+
+.cardLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mediaFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 35%, var(--bg)) 0%,
+    color-mix(in srgb, var(--ink) 12%, var(--bg)) 100%
+  );
+}
+
+.mediaFallbackLetter {
+  font-family: var(--fontDisplay);
+  font-size: clamp(2.5rem, 6vw, 3.25rem);
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+.meta {
+  padding: 12px 14px 14px;
+}
+
+.name {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--ink);
+}

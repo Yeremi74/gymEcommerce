@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useId, useState } from "react"
+import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Link } from "react-router-dom"
-import { siteName } from "../../data/content"
+import { clientConfig } from "../../config/clientConfig.js"
 import { resolveAssetUrl } from "../../config/apiBase.js"
 import { useAuth } from "../../context/AuthContext"
 import { useProducts } from "../../context/ProductsContext"
@@ -67,13 +67,31 @@ function IconClose() {
   )
 }
 
+function IconSearchGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm10 2-4.35-4.35"
+      />
+    </svg>
+  )
+}
+
 function parseUsdNumber(raw) {
   if (raw == null) return 0
   const n = parseFloat(String(raw).replace(/[^0-9.-]/g, ""))
   return Number.isFinite(n) ? n : 0
 }
 
-export default function AppHeader() {
+/**
+ * @param {object} [props]
+ * @param {"default" | "landing"} [props.variant]
+ */
+export default function AppHeader({ variant = "default" }) {
   const { user, logout } = useAuth()
   const { getProductById } = useProducts()
   const {
@@ -83,10 +101,58 @@ export default function AppHeader() {
     cartUnitsTotal,
   } = useUserLists()
   const [panel, setPanel] = useState(null)
+  const [landingSurface, setLandingSurface] = useState("hero")
+  const lastScrollY = useRef(0)
+  const heroEndY = useRef(520)
   const titleId = useId()
   const panelRegionId = `${titleId}-region`
 
   const closePanel = useCallback(() => setPanel(null), [])
+
+  useEffect(() => {
+    if (variant !== "landing") return undefined
+
+    const readHeroEnd = () => {
+      const hero = document.getElementById("landing-hero")
+      if (hero) {
+        const rect = hero.getBoundingClientRect()
+        heroEndY.current = window.scrollY + rect.bottom - 88
+      } else {
+        heroEndY.current = Math.min(window.innerHeight * 0.72, 620)
+      }
+    }
+
+    readHeroEnd()
+    lastScrollY.current = window.scrollY
+
+    const onScroll = () => {
+      const y = window.scrollY
+      const dy = y - lastScrollY.current
+      lastScrollY.current = y
+      const end = heroEndY.current
+
+      setLandingSurface((prev) => {
+        if (y < 20) return "hero"
+        if (y >= end) return "solid"
+        if (dy < -2) return "solid"
+        if (dy > 2) return "hero"
+        return prev
+      })
+    }
+
+    const onResize = () => {
+      readHeroEnd()
+      onScroll()
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onResize)
+    onScroll()
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onResize)
+    }
+  }, [variant])
 
   useEffect(() => {
     if (!panel) return undefined
@@ -327,63 +393,143 @@ export default function AppHeader() {
         )
       : null
 
-  return (
-    <header className={styles.root}>
-      {drawer}
-      <div className={styles.inner}>
-        <Link to="/" className={styles.logo}>
-          {siteName}
-        </Link>
-        <nav className={styles.nav} aria-label="Principal">
-          <button
-            type="button"
-            className={styles.iconBtn}
-            aria-label="Favoritos"
-            aria-expanded={panel === "favorites"}
-            aria-controls={panel === "favorites" ? panelRegionId : undefined}
-            onClick={() =>
-              setPanel((p) => (p === "favorites" ? null : "favorites"))
-            }
-          >
-            <IconHeart />
-            {favoriteCount > 0 ? (
-              <span className={styles.badge}>{favoriteCount}</span>
-            ) : null}
-          </button>
-          <button
-            type="button"
-            className={styles.iconBtn}
-            aria-label="Carrito"
-            aria-expanded={panel === "cart"}
-            aria-controls={panel === "cart" ? panelRegionId : undefined}
-            onClick={() => setPanel((p) => (p === "cart" ? null : "cart"))}
-          >
-            <IconCart />
-            {cartUnitsTotal > 0 ? (
-              <span className={styles.badge}>{cartUnitsTotal}</span>
-            ) : null}
-          </button>
-          {user ? (
-            <details className={styles.profile}>
-              <summary className={styles.iconBtn} aria-label="Perfil">
-                <IconUser />
-              </summary>
-              <div className={styles.profileMenu}>
-                <p className={styles.profileEmail} title={user.email}>
-                  {user.name}
-                </p>
-                <button className={styles.profileLogout} type="button" onClick={() => logout()}>
-                  Salir
-                </button>
-              </div>
-            </details>
-          ) : (
-            <Link className={styles.iconBtn} to="/login" aria-label="Iniciar sesión">
-              <IconUser />
-            </Link>
-          )}
-        </nav>
+  const profileControl = user ? (
+    <details className={styles.profile}>
+      <summary className={styles.iconBtn} aria-label="Perfil">
+        <IconUser />
+      </summary>
+      <div className={styles.profileMenu}>
+        <p className={styles.profileEmail} title={user.email}>
+          {user.name}
+        </p>
+        <button className={styles.profileLogout} type="button" onClick={() => logout()}>
+          Salir
+        </button>
       </div>
+    </details>
+  ) : (
+    <Link className={styles.iconBtn} to="/login" aria-label="Iniciar sesión">
+      <IconUser />
+    </Link>
+  )
+
+  const favoritesBtn = (
+    <button
+      type="button"
+      className={styles.iconBtn}
+      aria-label="Favoritos"
+      aria-expanded={panel === "favorites"}
+      aria-controls={panel === "favorites" ? panelRegionId : undefined}
+      onClick={() => setPanel((p) => (p === "favorites" ? null : "favorites"))}
+    >
+      <IconHeart />
+      {favoriteCount > 0 ? <span className={styles.badge}>{favoriteCount}</span> : null}
+    </button>
+  )
+
+  const cartBtn = (
+    <button
+      type="button"
+      className={styles.iconBtn}
+      aria-label="Carrito"
+      aria-expanded={panel === "cart"}
+      aria-controls={panel === "cart" ? panelRegionId : undefined}
+      onClick={() => setPanel((p) => (p === "cart" ? null : "cart"))}
+    >
+      <IconCart />
+      {cartUnitsTotal > 0 ? <span className={styles.badge}>{cartUnitsTotal}</span> : null}
+    </button>
+  )
+
+  const onLandingSearch = (e) => {
+    e.preventDefault()
+    const el = document.getElementById("tienda")
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  const headerSurfaceClass =
+    variant === "landing"
+      ? landingSurface === "hero"
+        ? styles.rootLandingHero
+        : styles.rootLandingSolid
+      : styles.surfaceDefault
+
+  return (
+    <header
+      className={`${styles.root} ${variant === "landing" ? styles.landingDocked : ""} ${headerSurfaceClass}`}
+    >
+      {drawer}
+      {variant === "landing" ? (
+        <div className={styles.innerLanding}>
+          <Link to="/" className={styles.logo}>
+            {clientConfig.logoUrl?.trim() ? (
+              <img
+                className={styles.logoImg}
+                src={clientConfig.logoUrl.trim()}
+                alt=""
+                width={28}
+                height={28}
+                decoding="async"
+              />
+            ) : null}
+            <span className={styles.logoText}>{clientConfig.siteName}</span>
+          </Link>
+          <nav className={styles.navLinks} aria-label="Secciones">
+            <Link className={styles.navLink} to="/#tienda">
+              Tienda
+            </Link>
+            <Link className={styles.navLink} to="/#colecciones">
+              Colecciones
+            </Link>
+            <Link className={styles.navLink} to="/#nuevos">
+              Nuevos
+            </Link>
+          </nav>
+          <div className={styles.search}>
+            <form className={styles.searchForm} role="search" onSubmit={onLandingSearch}>
+              <div className={styles.searchWrap}>
+                <span className={styles.searchIcon}>
+                  <IconSearchGlyph />
+                </span>
+                <input
+                  className={styles.searchField}
+                  type="search"
+                  name="q"
+                  placeholder="Buscar"
+                  aria-label="Buscar"
+                  autoComplete="off"
+                />
+              </div>
+            </form>
+          </div>
+          <nav className={styles.navActions} aria-label="Cuenta y listas">
+            {profileControl}
+            {favoritesBtn}
+            {cartBtn}
+          </nav>
+        </div>
+      ) : (
+        <div className={styles.inner}>
+          <Link to="/" className={styles.logo}>
+            {clientConfig.logoUrl?.trim() ? (
+              <img
+                className={styles.logoImg}
+                src={clientConfig.logoUrl.trim()}
+                alt=""
+                width={28}
+                height={28}
+                decoding="async"
+              />
+            ) : null}
+            <span className={styles.logoText}>{clientConfig.siteName}</span>
+          </Link>
+          <nav className={styles.nav} aria-label="Principal">
+            {favoritesBtn}
+            {cartBtn}
+            {profileControl}
+          </nav>
+        </div>
+      )}
     </header>
   )
 }

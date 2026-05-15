@@ -1,9 +1,9 @@
 import { imageHero } from "../../data/content"
 import styles from "./VideoHeroSection.module.css"
 
-export default function VideoHeroSection() {
+export default function VideoHeroSection({ htmlId = "hero-video" } = {}) {
   return (
-    <section className={styles.root} id="hero-video" aria-labelledby="heroImageTitle">
+    <section className={styles.root} id={htmlId} aria-labelledby="heroImageTitle">
       <div className={styles.frame}>
         <img
           className={styles.image}

@@ -1,0 +1,287 @@
+.loadingRoot {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space);
+  color: var(--muted);
+}
+
+.denied {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space);
+  text-align: center;
+  gap: 12px;
+}
+
+.deniedTitle {
+  margin: 0;
+  font-family: var(--fontDisplay);
+  font-size: 1.5rem;
+}
+
+.deniedText {
+  margin: 0;
+  color: var(--muted);
+  max-width: 36ch;
+}
+
+.deniedLink {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg);
+}
+
+.sidebar {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 10px 20px;
+  border-right: 1px solid var(--line);
+  background: var(--bgElevated);
+  transition: width 0.2s ease;
+  box-sizing: border-box;
+}
+
+.brandBlock {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.brandLogoImg {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: block;
+  object-fit: contain;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.navIcon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.navLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.navLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navLink:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--accent);
+}
+
+.navLinkActive {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  color: var(--ink);
+}
+
+.sidebarFoot {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.storeLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: var(--radius);
+}
+
+.storeLink:hover {
+  color: var(--accent);
+}
+
+/* Escritorio: sidebar fijo al viewport; el contenido principal hace scroll con la página */
+@media (min-width: 721px) {
+  .shell {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 40;
+    width: 76px;
+    align-items: stretch;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main {
+    margin-left: 76px;
+    min-height: 100vh;
+    overflow: visible;
+    transition: margin-left 0.2s ease;
+  }
+}
+
+/* Escritorio con hover: solo cambia el ancho del sidebar; el contenido cede espacio */
+@media (min-width: 721px) and (hover: hover) {
+  .shell:has(.sidebar:hover) .main {
+    margin-left: 260px;
+  }
+
+  .sidebar:hover {
+    width: 260px;
+  }
+}
+
+/* Pantallas táctiles sin hover fiable: menú siempre expandido */
+@media (min-width: 721px) and (hover: none) {
+  .sidebar {
+    width: 260px;
+  }
+
+  .main {
+    margin-left: 260px;
+  }
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: calc(var(--space) * 1.1) var(--space);
+}
+
+@media (max-width: 720px) {
+  .shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: static;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    z-index: auto;
+    overflow: visible;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 14px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brandBlock {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+
+  .nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .navLink {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .navLabel {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    border: 0;
+  }
+
+  .sidebarFoot {
+    margin-top: 10px;
+    padding-top: 0;
+    border-top: none;
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .storeLink {
+    justify-content: center;
+  }
+
+  .main {
+    margin-left: 0;
+    min-height: 0;
+    overflow: auto;
+    transition: none;
+  }
+}

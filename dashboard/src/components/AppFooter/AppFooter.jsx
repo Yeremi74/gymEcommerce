@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { siteName } from "../../data/content"
+import { clientConfig } from "../../config/clientConfig.js"
 import styles from "./AppFooter.module.css"
 
 export default function AppFooter() {
@@ -7,10 +7,8 @@ export default function AppFooter() {
     <footer className={styles.root}>
       <div className={styles.inner}>
         <div>
-          <p className={styles.brandLogo}>{siteName}</p>
-          <p className={styles.tagline}>
-            Suplementos con criterio. Entrena con orden.
-          </p>
+          <p className={styles.brandLogo}>{clientConfig.siteName}</p>
+          <p className={styles.tagline}>{clientConfig.tagline}</p>
         </div>
         <div className={styles.cols}>
           <div className={styles.col}>
@@ -18,11 +16,17 @@ export default function AppFooter() {
             <a className={styles.link} href="#featured">
               Destacados
             </a>
-            <a className={styles.link} href="#bars">
-              Barras
+            <a className={styles.link} href="#tendencia">
+              En tendencia
             </a>
-            <a className={styles.link} href="#powders">
-              Potes
+            <a className={styles.link} href="#pantalones">
+              Pantalones
+            </a>
+            <a className={styles.link} href="#hoodies">
+              Hoodies
+            </a>
+            <a className={styles.link} href="#camisetas">
+              Camisetas
             </a>
             <Link className={styles.link} to="/articles/post-workout-protein">
               Primera guía
@@ -39,7 +43,7 @@ export default function AppFooter() {
           </div>
         </div>
       </div>
-      <p className={styles.copy}>© {new Date().getFullYear()} {siteName}</p>
+      <p className={styles.copy}>© {new Date().getFullYear()} {clientConfig.siteName}</p>
     </footer>
   )
 }

@@ -66,10 +66,10 @@ export default function BenefitsSection() {
     >
       <div className={styles.head}>
         <h2 id="benefitsSectionTitle" className={styles.title}>
-          Beneficios de los productos
+          Por qué comprar con nosotros
         </h2>
         <p className={styles.lead}>
-          Qué aportan a tu nutrición deportiva y a tu día a día en el gym.
+          Streetwear con buena base: prendas que conviven entre sí y aguantan el ritmo de la ciudad.
         </p>
       </div>
       <ul className={styles.grid}>

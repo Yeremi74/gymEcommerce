@@ -276,6 +276,13 @@
   font-weight: 600;
 }
 
+.taxLine {
+  margin: 6px 0 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
 .price {
   margin: 4px 0 0;
   font-size: 1.125rem;

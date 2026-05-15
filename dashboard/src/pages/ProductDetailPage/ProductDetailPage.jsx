@@ -7,7 +7,11 @@ import ProductCard from "../../components/ProductCard/ProductCard"
 import { useAuth } from "../../context/AuthContext"
 import { useProducts } from "../../context/ProductsContext"
 import { useUserLists } from "../../context/UserListsContext"
-import { getProductGallery } from "../../data/content"
+import {
+  getProductGallery,
+  getProductCategoryKey,
+  productCategorySectionMeta,
+} from "../../data/content"
 import { resolveAssetUrl } from "../../config/apiBase.js"
 import { formatPriceUsd } from "../../utils/formatPriceUsd.js"
 import styles from "./ProductDetailPage.module.css"
@@ -206,26 +210,27 @@ export default function ProductDetailPage() {
   }
 
   const subtitle =
-    "flavor" in product ? product.flavor : "sublabel" in product ? product.sublabel : null
-  const isBar = productId.startsWith("b")
-  const categoryLabel = isBar ? "Barras proteicas" : "Polvos y botes"
-  const categoryHref = isBar ? "/#bars" : "/#powders"
+    product.detail ??
+    ("flavor" in product ? product.flavor : null) ??
+    ("sublabel" in product ? product.sublabel : null)
+  const categoryLabel =
+    product.categoryName?.trim() ||
+    productCategorySectionMeta[getProductCategoryKey(productId)]?.label ||
+    "Catálogo"
+  const slug =
+    typeof product.categorySlug === "string" ? product.categorySlug.trim() : ""
+  const categoryHref = slug
+    ? `/#categoria-${slug}`
+    : productCategorySectionMeta[getProductCategoryKey(productId)]?.href ?? "/"
   const related = getRelatedProducts(productId, 4)
   const favoriteActive = productId ? isFavorite(productId) : false
 
-  const specRows = isBar
-    ? [
-        { label: "Referencia", value: product.id.toUpperCase() },
-        { label: "Formato", value: "Barra individual" },
-        ...(subtitle ? [{ label: "Sabor / variante", value: subtitle }] : []),
-        { label: "Familia", value: "Snack proteico" },
-      ]
-    : [
-        { label: "Referencia", value: product.id.toUpperCase() },
-        ...(subtitle ? [{ label: "Presentación", value: subtitle }] : []),
-        { label: "Formato", value: "Suplemento en polvo o cápsulas" },
-        { label: "Familia", value: "Nutrición deportiva" },
-      ]
+  const specRows = [
+    { label: "Referencia", value: product.id.toUpperCase() },
+    ...(subtitle ? [{ label: "Color / variante", value: subtitle }] : []),
+    { label: "Sección", value: categoryLabel },
+    { label: "Familia", value: "Streetwear" },
+  ]
 
   return (
     <div className="page">
@@ -331,6 +336,13 @@ export default function ProductDetailPage() {
               <p className={styles.categoryLine}>{categoryLabel}</p>
               {subtitle ? <p className={styles.eyebrow}>{subtitle}</p> : null}
               <h1 className={styles.pageTitle}>{product.name}</h1>
+              {product.categoryName || product.collectionName ? (
+                <p className={styles.taxLine}>
+                  {[product.categoryName, product.collectionName]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              ) : null}
               <p className={styles.price}>{formatPriceUsd(product.price)}</p>
 
               <div className={styles.buyBox}>

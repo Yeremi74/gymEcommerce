@@ -4,7 +4,7 @@
 }
 
 .shell {
-  max-width: 720px;
+  max-width: 920px;
   margin: 0 auto;
 }
 
@@ -246,4 +246,147 @@
   margin: 0;
   font-size: 0.9375rem;
   color: #a31f1f;
+}
+
+.taxColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 720px) {
+  .taxColumns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  background: var(--bgElevated);
+}
+
+.panelTitle {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.panelHint {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.inlineForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.compactList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.listRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.listMeta {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.taxonomyRowMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.taxonomyRowText {
+  min-width: 0;
+}
+
+.taxonomyThumb {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.taxonomyThumbPlaceholder {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.mutedList {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.formSectionTitle {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.btnSecondary {
+  align-self: flex-start;
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.btnSecondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btnDanger {
+  padding: 6px 12px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border: 1px solid color-mix(in srgb, #a31f1f 40%, var(--line));
+  border-radius: var(--radius);
+  background: transparent;
+  color: #a31f1f;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btnDanger:hover {
+  background: color-mix(in srgb, #a31f1f 10%, transparent);
 }

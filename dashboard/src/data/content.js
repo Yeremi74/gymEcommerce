@@ -1,367 +1,379 @@
-export const siteName = "Forge Nutrition"
-
 export const carouselFeatured = [
   {
     id: "c1",
-    name: "Whey Isolate",
-    category: "Proteína",
-    price: "$42.90",
-    tagline: "Alta pureza, digestión ligera",
+    name: "Hoodie boxy washed",
+    category: "Streetwear",
+    price: "$72.00",
+    tagline: "Capucha amplia, felpa pesada y acabado envejecido",
     imageUrl:
-      "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=1920&q=80",
   },
   {
     id: "c2",
-    name: "Creatina micronizada",
-    category: "Fuerza",
-    price: "$24.50",
-    tagline: "Series más sólidas, sin complicaciones",
+    name: "Cargo wide leg",
+    category: "Pantalones",
+    price: "$89.50",
+    tagline: "Bolsillos utilitarios y caída amplia de calle",
     imageUrl:
-      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?auto=format&fit=crop&w=1920&q=80",
   },
   {
     id: "c3",
-    name: "BCAA 2:1:1",
-    category: "Aminoácidos",
-    price: "$29.00",
-    tagline: "Sabor limpio para sesiones largas",
+    name: "Graphic tee vintage",
+    category: "Camisetas",
+    price: "$38.00",
+    tagline: "Algodón suave y estampa con vibe noventero",
     imageUrl:
-      "https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1503341455253-b2e723bb3db9?auto=format&fit=crop&w=1920&q=80",
   },
   {
     id: "c4",
-    name: "Pre-Workout",
-    category: "Energía",
-    price: "$36.75",
-    tagline: "Enfoque y ritmo sin exceso de estimulantes",
+    name: "Chaqueta técnica",
+    category: "Outerwear",
+    price: "$124.00",
+    tagline: "Capas ligeras para lluvia sin perder silueta",
     imageUrl:
-      "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=1920&q=80",
   },
   {
     id: "c5",
-    name: "Electrolitos",
-    category: "Hidratación",
-    price: "$18.90",
-    tagline: "Reponer lo esencial cuando sudas de verdad",
+    name: "Parachute nylon",
+    category: "En tendencia",
+    price: "$76.90",
+    tagline: "Brillo sutil y movimiento tipo Y2K",
     imageUrl:
-      "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1920&q=80",
   },
   {
     id: "c6",
-    name: "Omega-3",
-    category: "Salud",
-    price: "$32.00",
-    tagline: "Ácidos grasos esenciales en cápsulas blandas",
+    name: "Zapatillas chunky",
+    category: "Calzado",
+    price: "$98.00",
+    tagline: "Suela voluminosa para cerrar el look urbano",
     imageUrl:
-      "https://images.unsplash.com/photo-1550572017-4cbf92297738?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1920&q=80",
   },
   {
     id: "c7",
-    name: "Magnesio bisglicinato",
-    category: "Recuperación",
-    price: "$16.50",
-    tagline: "Apoyo a músculo y descanso nocturno",
+    name: "Set tonal black",
+    category: "Monocromo",
+    price: "$112.00",
+    tagline: "Prendas que combinan entre sí sin pensarlo",
     imageUrl:
-      "https://images.unsplash.com/photo-1505576399279-565b52d4ac29?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1920&q=80",
   },
   {
     id: "c8",
-    name: "Vitamina D3 + K2",
-    category: "Bienestar",
-    price: "$21.90",
-    tagline: "Combinación pensada para absorción y uso",
+    name: "Gorro beanie canalé",
+    category: "Accesorios",
+    price: "$24.00",
+    tagline: "Toque final para días fríos o looks minimal",
     imageUrl:
-      "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=1920&q=80",
   },
   {
     id: "c9",
-    name: "Gainer limpio",
-    category: "Masa",
-    price: "$48.00",
-    tagline: "Calorías de calidad cuando cuesta comer de más",
+    name: "Varsity jacket",
+    category: "Outerwear",
+    price: "$138.00",
+    tagline: "Parches, ribetes y actitud de instituto",
     imageUrl:
-      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1920&q=80",
   },
 ]
 
 export const imageHero = {
-  title: "Entrena con intención",
+  title: "Streetwear con criterio",
   description:
-    "Seleccionamos fórmulas claras para quien quiere progresar sin llenar el armario de productos que no va a usar.",
+    "Drops curados: siluetas oversize, denim con carácter y capas que funcionan de día a noche. Menos ruido, más actitud.",
   imageUrl:
-    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=2400&q=80",
-  primaryCta: { label: "Explorar suplementos", href: "#powders" },
-  secondaryCta: { label: "Ver barras", href: "#bars" },
+    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2400&q=80",
+  primaryCta: { label: "Ver hoodies", href: "#hoodies" },
+  secondaryCta: { label: "En tendencia", href: "#tendencia" },
+}
+
+/** Hero secundario de la landing (pantalones / editorial). */
+export const landingHeroSecondary = {
+  imageUrl:
+    "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?auto=format&fit=crop&w=2400&q=80",
+}
+
+/** Imagen editorial al lado del bloque 2×2 en secciones tipo “Nuevos / Más vendidos”. */
+export const landingPromoSpotlightImage = {
+  imageUrl:
+    "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80",
 }
 
 export const homeBenefits = [
   {
     id: "hb1",
     icon: "shipping",
-    title: "Listos para tu rutina",
+    title: "Envíos claros",
     description:
-      "Polvos, barras y formatos que encajan en el bolso del gym o en la oficina, sin complicarte la logística diaria.",
+      "Seguimiento simple desde el pedido hasta la puerta: ideal cuando pedís varias piezas para armar un fit.",
   },
   {
     id: "hb2",
     icon: "quality",
-    title: "Nutrición orientada al objetivo",
+    title: "Tejidos que aguantan",
     description:
-      "Proteínas, creatina, aminoácidos y más: fórmulas pensadas para recuperación, fuerza o energía según lo que busques.",
+      "Priorizamos felpa densa, costuras sólidas y denim con buena mano para que el streetwear no sea de un solo uso.",
   },
   {
     id: "hb3",
     icon: "secure",
-    title: "Composición que podés revisar",
+    title: "Tallas sin sorpresas",
     description:
-      "Priorizamos productos con información clara de ingredientes, dosis y alérgenos para que elijas con criterio.",
+      "Medidas orientativas y composición visible para elegir tallaje oversize o más ajustado con confianza.",
   },
   {
     id: "hb4",
     icon: "support",
-    title: "Apoyo al rendimiento y la recuperación",
+    title: "Estilo sin complicarte",
     description:
-      "Desde el pre-entreno hasta el post-entreno, cada categoría aporta un beneficio concreto a tu plan de entrenamiento.",
+      "Te ayudamos a combinar básicos con piezas statement para looks coherentes con tu día a día urbano.",
   },
 ]
 
-export const barSupplements = [
+export const trendingProductsSeed = [
   {
-    id: "b1",
-    name: "Barra 20 g proteína",
-    flavor: "Chocolate",
-    price: "$2.40",
+    id: "tr1",
+    name: "Parachute nylon",
+    detail: "Negro · ajuste cordón",
+    price: "$78.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "b2",
-    name: "Barra crujiente",
-    flavor: "Cacahuete",
-    price: "$2.20",
+    id: "tr2",
+    name: "Chaleco utility",
+    detail: "Gris cemento · M",
+    price: "$64.50",
     imageUrl:
-      "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1503341455253-b2e723bb3db9?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "b3",
-    name: "Barra baja en azúcar",
-    flavor: "Vainilla",
-    price: "$2.65",
+    id: "tr3",
+    name: "Gorra estructurada",
+    detail: "Caqui · bordado tono",
+    price: "$32.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1606312619070-f869d6b93bfe?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "b4",
-    name: "Barra avena y frutos",
-    flavor: "Arándanos",
-    price: "$2.35",
+    id: "tr4",
+    name: "Bolso crossbody mini",
+    detail: "Piel sintética mate",
+    price: "$41.90",
     imageUrl:
-      "https://images.unsplash.com/photo-1590080875515-8a5ff2c8e58d?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "b5",
-    name: "Barra proteica vegana",
-    flavor: "Cacao",
-    price: "$2.80",
+    id: "tr5",
+    name: "Chaqueta sherpa zip",
+    detail: "Marfil · oversize",
+    price: "$96.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1469334031218-e382a71b224b?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "b6",
-    name: "Barra energética dátiles",
-    flavor: "Café",
-    price: "$2.15",
+    id: "tr6",
+    name: "Set tonal gris",
+    detail: "Hoodie + jogger",
+    price: "$118.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "b7",
-    name: "Barra 15 g proteína",
-    flavor: "Fresa",
-    price: "$2.10",
-    imageUrl:
-      "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "b8",
-    name: "Barra muesli y miel",
-    flavor: "Miel",
-    price: "$2.30",
-    imageUrl:
-      "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "b9",
-    name: "Barra proteica sin lactosa",
-    flavor: "Limón",
-    price: "$2.55",
-    imageUrl:
-      "https://images.unsplash.com/photo-1490474418585-ba3576c46ea2?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "b10",
-    name: "Barra crujiente doble capa",
-    flavor: "Caramelo salado",
-    price: "$2.45",
-    imageUrl:
-      "https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "b11",
-    name: "Barra fibra y proteína",
-    flavor: "Manzana",
-    price: "$2.25",
-    imageUrl:
-      "https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "b12",
-    name: "Barra keto",
-    flavor: "Coco",
-    price: "$2.90",
-    imageUrl:
-      "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=900&q=80",
   },
 ]
 
-export const powderSupplements = [
+export const pantsProductsSeed = [
   {
-    id: "pow1",
-    name: "Creatina monohidrato",
-    sublabel: "300 g · sin sabor",
-    price: "$24.50",
+    id: "pn1",
+    name: "Cargo wide leg",
+    detail: "Caqui · 6 bolsillos",
+    price: "$89.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "pow2",
-    name: "Glutamina",
-    sublabel: "250 g",
-    price: "$22.00",
+    id: "pn2",
+    name: "Baggy denim",
+    detail: "Azul medio · L",
+    price: "$82.50",
     imageUrl:
-      "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1541099649102-fbd7ebdcdc78?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "pow3",
-    name: "Beta alanina",
-    sublabel: "200 g",
-    price: "$19.90",
+    id: "pn3",
+    name: "Jogger técnico",
+    detail: "Negro · ribete fino",
+    price: "$58.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "pow4",
-    name: "Citrulina malato",
-    sublabel: "240 g",
-    price: "$27.40",
+    id: "pn4",
+    name: "Pantalón carpenter",
+    detail: "Arena · talle alto",
+    price: "$74.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "pow5",
-    name: "Whey concentrate",
-    sublabel: "1 kg · vainilla",
-    price: "$44.90",
+    id: "pn5",
+    name: "Chino relaxed",
+    detail: "Oliva · pinzas suaves",
+    price: "$69.90",
     imageUrl:
-      "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "pow6",
-    name: "Proteína vegetal",
-    sublabel: "750 g · chocolate",
-    price: "$39.50",
+    id: "pn6",
+    name: "Track pant raya lateral",
+    detail: "Gris / blanco roto",
+    price: "$62.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80",
+  },
+]
+
+export const hoodiesProductsSeed = [
+  {
+    id: "hd1",
+    name: "Hoodie washed boxy",
+    detail: "Carbón · felpa 380g",
+    price: "$72.00",
+    imageUrl:
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "pow7",
-    name: "EAA completo",
-    sublabel: "360 g · lima",
+    id: "hd2",
+    name: "Zip hoodie minimal",
+    detail: "Gris melange · L",
+    price: "$68.00",
+    imageUrl:
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: "hd3",
+    name: "Crewneck oversize",
+    detail: "Crema · hombro caído",
+    price: "$54.00",
+    imageUrl:
+      "https://images.unsplash.com/photo-1578587018452-892b21fd6739?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: "hd4",
+    name: "Half-zip polar",
+    detail: "Azul noche · M",
+    price: "$79.00",
+    imageUrl:
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: "hd5",
+    name: "Hoodie crop",
+    detail: "Lila apagado · S",
+    price: "$59.50",
+    imageUrl:
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: "hd6",
+    name: "Sudadera sin capucha",
+    detail: "Negro · rib angosto",
+    price: "$52.00",
+    imageUrl:
+      "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?auto=format&fit=crop&w=900&q=80",
+  },
+]
+
+export const teesProductsSeed = [
+  {
+    id: "ts1",
+    name: "Tee boxy logo",
+    detail: "Blanco roto · algodón",
+    price: "$36.00",
+    imageUrl:
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: "ts2",
+    name: "Longsleeve rib",
+    detail: "Negro · cuello mock",
+    price: "$44.00",
+    imageUrl:
+      "https://images.unsplash.com/photo-1503341455253-b2e723bb3db9?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: "ts3",
+    name: "Camiseta vintage wash",
+    detail: "Verde bosque · L",
+    price: "$38.50",
+    imageUrl:
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: "ts4",
+    name: "Tank mesh overlay",
+    detail: "Gris perla",
     price: "$34.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1469334031218-e382a71b224b?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "pow8",
-    name: "HMB",
-    sublabel: "180 cápsulas",
-    price: "$28.90",
+    id: "ts5",
+    name: "Polo knit street",
+    detail: "Chocolate · M",
+    price: "$48.00",
     imageUrl:
-      "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "pow9",
-    name: "Electrolitos en polvo",
-    sublabel: "400 g · limón",
-    price: "$19.50",
+    id: "ts6",
+    name: "Tee oversize abstract",
+    detail: "Gris · estampa suave",
+    price: "$39.90",
     imageUrl:
-      "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: "pow10",
-    name: "Arginina AKG",
-    sublabel: "300 g",
-    price: "$26.00",
-    imageUrl:
-      "https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: "pow11",
-    name: "Colágeno hidrolizado",
-    sublabel: "500 g · neutro",
-    price: "$31.20",
-    imageUrl:
-      "https://images.unsplash.com/photo-1550572017-4cbf92297738?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: "pow12",
-    name: "Caseína micelar",
-    sublabel: "900 g · cookies",
-    price: "$46.00",
-    imageUrl:
-      "https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=900&q=80",
   },
 ]
 
-export function getProductById(id) {
-  return (
-    barSupplements.find((item) => item.id === id) ||
-    powderSupplements.find((item) => item.id === id) ||
-    null
-  )
+export const productSeedLists = {
+  trending: trendingProductsSeed,
+  pants: pantsProductsSeed,
+  hoodies: hoodiesProductsSeed,
+  tees: teesProductsSeed,
 }
 
-export function getRelatedProducts(productId, limit = 4) {
-  const inBars = barSupplements.some((item) => item.id === productId)
-  const list = inBars ? barSupplements : powderSupplements
-  if (!inBars && !powderSupplements.some((item) => item.id === productId)) {
-    return []
-  }
-  return list.filter((item) => item.id !== productId).slice(0, limit)
+export const productCategoryKeys = ["trending", "pants", "hoodies", "tees"]
+
+export function getProductCategoryKey(productId) {
+  if (!productId || typeof productId !== "string") return "trending"
+  if (productId.startsWith("pn")) return "pants"
+  if (productId.startsWith("ts")) return "tees"
+  if (productId.startsWith("pow") || productId.startsWith("hd")) return "hoodies"
+  return "trending"
 }
 
-const barGalleryPool = [
-  "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1606312619070-f869d6b93bfe?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1590080875515-8a5ff2c8e58d?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=800&q=80",
-]
+export const productCategorySectionMeta = {
+  trending: { label: "En tendencia", href: "/#tendencia" },
+  pants: { label: "Pantalones", href: "/#pantalones" },
+  hoodies: { label: "Hoodies", href: "/#hoodies" },
+  tees: { label: "Camisetas", href: "/#camisetas" },
+}
 
-const powderGalleryPool = [
-  "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1550572017-4cbf92297738?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=900&q=80",
-]
+const trendingGalleryPool = trendingProductsSeed.map((p) => p.imageUrl)
+const pantsGalleryPool = pantsProductsSeed.map((p) => p.imageUrl)
+const hoodiesGalleryPool = hoodiesProductsSeed.map((p) => p.imageUrl)
+const teesGalleryPool = teesProductsSeed.map((p) => p.imageUrl)
+
+const galleryPoolsByCategory = {
+  trending: trendingGalleryPool,
+  pants: pantsGalleryPool,
+  hoodies: hoodiesGalleryPool,
+  tees: teesGalleryPool,
+}
 
 export function getProductGallery(product) {
   if (Array.isArray(product.imageUrls) && product.imageUrls.length > 0) {
@@ -374,7 +386,7 @@ export function getProductGallery(product) {
   ) {
     return [product.imageUrl]
   }
-  const pool = product.id.startsWith("b") ? barGalleryPool : powderGalleryPool
+  const pool = galleryPoolsByCategory[getProductCategoryKey(product.id)] || trendingGalleryPool
   const main = product.imageUrl
   const extra = []
   const used = new Set([main])
@@ -398,54 +410,54 @@ export function getProductGallery(product) {
 }
 
 export const productDescriptionsById = {
-  b1:
-    "Barra con 20 g de proteína por porción, sabor chocolate. Ideal como snack entre comidas o después del gimnasio. Textura suave y saciedad clara sin exceso de azúcar añadido.",
-  b2:
-    "Barra crujiente con cacahuete tostado y capa ligera de cobertura. Aporta energía práctica y un perfil de grasas que sacia sin pesar en el estómago.",
-  b3:
-    "Fórmula con vainilla y edulcorantes para quien vigila el azúcar. Mantiene el sabor dulce con un perfil más controlado para el día a día.",
-  b4:
-    "Mezcla de avena integral y arándanos deshidratados. Buena opción antes de salir a entrenar o como merienda con fibra y carbohidratos complejos.",
-  b5:
-    "Proteína de origen vegetal con notas a cacao. Sin ingredientes de origen animal, pensada para dietas veganas y digestión estable.",
-  b6:
-    "Base de dátiles naturales con un toque de café. Energía rápida en formato compacto para sesiones largas o días con poco tiempo para comer.",
-  b7:
-    "15 g de proteína y sabor a fresa. Porción más ligera si buscas algo entre comidas sin sentirte demasiado lleno.",
-  b8:
-    "Muesli crujiente con miel y semillas. Perfil más tradicional, buen equilibrio entre dulzor natural y textura variada.",
-  b9:
-    "Sin lactosa y con cítrico suave de limón. Para quien tolera mal la lactosa pero quiere seguir llevando una barra proteica en la mochila.",
-  b10:
-    "Doble capa con caramelo salado y cobertura. Textura indulgente manteniendo macros razonables para un capricho planificado.",
-  b11:
-    "Combinación de fibra dietética y proteína con manzana. Pensada para apoyar la regularidad digestiva sin renunciar al sabor.",
-  b12:
-    "Perfil bajo en hidratos de carbono netos con coco. Encaja en dietas cetogénicas o muy bajas en carbohidratos con grasas de calidad.",
-  pow1:
-    "Creatina monohidrato micronizada, 300 g sin sabor. Se dosifica fácil en batidos o zumos; apoya la fuerza y la repetición en series de trabajo.",
-  pow2:
-    "Glutamina en polvo, 250 g. Uso habitual en fases de carga o tras sesiones intensas; disolución clara en agua o bebida isotónica.",
-  pow3:
-    "Beta alanina 200 g para diluir. Puede producir hormigueo leve en algunas personas; espaciar tomas si notas molestias.",
-  pow4:
-    "Citrulina malato 240 g. Suele tomarse antes del entreno; el sabor es ácido y se mezcla bien con bebidas frías.",
-  pow5:
-    "Proteína whey concentrada 1 kg sabor vainilla. Versátil para batidos, avena o repostería fitness con buena textura cremosa.",
-  pow6:
-    "Mezcla proteica vegetal 750 g chocolate. Alternativa sin lácteos con perfil aminoacídico completo para dietas basadas en plantas.",
-  pow7:
-    "EAA en polvo 360 g sabor lima. Aminoácidos esenciales listos para diluir durante sesiones largas o en días de déficit calórico.",
-  pow8:
-    "HMB en cápsulas blandas, 180 unidades. Complemento práctico para quien prefiere no manipular polvos en el día a día.",
-  pow9:
-    "Electrolitos en polvo 400 g sabor limón. Reponer sodio, potasio y magnesio cuando el sudor es abundante o el clima es caluroso.",
-  pow10:
-    "Arginina AKG 300 g. Uso típico en fases de volumen o como parte de un pre-entreno casero; seguir la pauta de tu nutricionista.",
-  pow11:
-    "Colágeno hidrolizado 500 g neutro. Se disuelve en líquidos calientes o fríos y encaja en rutinas de articulaciones y tejido conectivo.",
-  pow12:
-    "Caseína micelar 900 g sabor cookies. Digestión lenta, útil antes de dormir o entre comidas muy separadas para mantener aminoácidos en sangre.",
+  tr1:
+    "Pantalón parachute en nylon ligero con cintura ajustable y pernera con volumen. Pensado para looks Y2K y layering con zapatillas chunky.",
+  tr2:
+    "Chaleco multipocket con cierre frontal y tejido resistente. Ideal como pieza intermedia entre hoodie y chaqueta fina.",
+  tr3:
+    "Gorra de perfil medio con visera rígida y bordado discreto. Ajuste clásico para uso diario y combinaciones tonales.",
+  tr4:
+    "Bandolera compacta con correa ancha y compartimento principal forrado. Formato práctico para llevar lo esencial en movimiento.",
+  tr5:
+    "Chaqueta sherpa con cremallera central y bolsillos insertados. Textura cálida y silueta amplia para días fríos urbanos.",
+  tr6:
+    "Conjunto hoodie y jogger en el mismo tono para armar un fit monocromático sin pensar. Felpa suave y acabado uniforme.",
+  pn1:
+    "Cargo de pierna ancha con bolsillos laterales y traseros. Caída relajada pensada para combinar con tees boxy o zip hoodies.",
+  pn2:
+    "Denim baggy con lavado medio y cinco bolsillos. Tiro cómodo y rodilla con margen para un perfil street clásico.",
+  pn3:
+    "Jogger en tejido técnico con puños elásticos y cintura con cordón. Transición fácil entre casa, skate y salidas rápidas.",
+  pn4:
+    "Pantalón carpenter con bolsillo martillo y costuras vistas. Silueta recta relajada para calzado voluminoso.",
+  pn5:
+    "Chino relaxed con pinzas suaves y talle medio-alto. Color tierra fácil de combinar con negros y grises.",
+  pn6:
+    "Track pant con franja lateral contrastada y corte recto. Referencia deportiva filtrada a un look urbano limpio.",
+  hd1:
+    "Hoodie boxy con lavado enzimático y capucha doble. Felpa pesada que mantiene la forma y aguanta uso intensivo.",
+  hd2:
+    "Zip hoodie con cierre metálico y bolsillos laterales. Capucha proporcionada y puños firmes para capas intermedias.",
+  hd3:
+    "Cuello redondo oversize con hombro caído y pecho amplio. Base perfecta para collares, cadenas o chaquetas abiertas.",
+  hd4:
+    "Media cremallera tipo polar con cuello alto. Tejido afelpado interior para abrigo extra sin sumar demasiado volumen.",
+  hd5:
+    "Hoodie recortado con rib inferior más corto. Contraste con cargos o denim high rise para jugar proporciones.",
+  hd6:
+    "Sudadera sin capucha con interior cepillado y rib estrecho. Pieza básica para looks minimal o uniformes diarios.",
+  ts1:
+    "Camiseta boxy con estampa pequeña al pecho y algodón peinado. Hombro recto y caída corta tipo skate.",
+  ts2:
+    "Manga larga canalé con cuello mock ajustado. Capa base que funciona sola o debajo de chalecos y denim jackets.",
+  ts3:
+    "Tee con lavado vintage y tono verde profundo. Estética usada suave sin perder estructura en los hombros.",
+  ts4:
+    "Tank con overlay de malla y corte recto. Textura mixta para looks nocturnos o festivales con capas ligeras.",
+  ts5:
+    "Polo de punto con cuello clásico y botonadura mínima. Mezcla formalidad ligera con silueta street relajada.",
+  ts6:
+    "Camiseta oversize con gráfico abstracto difuminado. Paleta neutra para combinar con pantalón parachute o denim.",
 }
 
 export const legacyArticleSlugRedirects = {

@@ -1,7 +1,10 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import "./global.css"
+import { applyClientTheme } from "./config/applyClientTheme.js"
 import App from "./App.jsx"
+
+applyClientTheme()
 import { ProductsProvider } from "./context/ProductsContext.jsx"
 import { AuthProvider } from "./context/AuthContext.jsx"
 import { UserListsProvider } from "./context/UserListsContext.jsx"

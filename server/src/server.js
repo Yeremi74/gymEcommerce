@@ -43,6 +43,10 @@ const mongoUri = process.env.MONGODB_URI || process.env.mongodb_uri
 const mongoDbName = process.env.MONGODB_DB || process.env.mongodb_db || "gym_ecommerce"
 const collectionName = "custom_products"
 const usersCollectionName = "users"
+const categoriesCollectionName = "product_categories"
+const collectionsCollectionName = "product_collections"
+
+const VALID_STORE_BUCKETS = ["trending", "pants", "hoodies", "tees"]
 
 const rootDir = path.join(__dirname, "..")
 const uploadsDir = path.join(rootDir, "uploads")
@@ -50,6 +54,8 @@ const uploadsDir = path.join(rootDir, "uploads")
 let mongoClient
 let productsCollection
 let usersCollection
+let categoriesCollection
+let collectionsCollection
 
 function ensureUploadsDir() {
   if (!fs.existsSync(uploadsDir)) {
@@ -67,9 +73,27 @@ async function connectMongo() {
   const db = mongoClient.db(mongoDbName)
   productsCollection = db.collection(collectionName)
   usersCollection = db.collection(usersCollectionName)
+  categoriesCollection = db.collection(categoriesCollectionName)
+  collectionsCollection = db.collection(collectionsCollectionName)
   await productsCollection.createIndex({ id: 1 }, { unique: true })
   await usersCollection.createIndex({ email: 1 }, { unique: true })
   await usersCollection.createIndex({ googleId: 1 }, { unique: true, sparse: true })
+  await categoriesCollection.createIndex({ id: 1 }, { unique: true })
+  await categoriesCollection.createIndex({ slug: 1 }, { unique: true })
+  await collectionsCollection.createIndex({ id: 1 }, { unique: true })
+  await collectionsCollection.createIndex({ slug: 1 }, { unique: true })
+}
+
+function slugify(str) {
+  const s = String(str)
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+  const slug = s
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+  return slug || "categoria"
 }
 
 function signUserToken(userDoc) {
@@ -167,40 +191,69 @@ function adminProductsAuth(req, res, next) {
   return res.status(401).json({ error: "Unauthorized" })
 }
 
-function docToBar(doc) {
-  const imageUrls =
-    Array.isArray(doc.imageUrls) && doc.imageUrls.length > 0
-      ? doc.imageUrls
-      : doc.imageUrl
-        ? [doc.imageUrl]
-        : []
-  return {
-    id: doc.id,
-    name: doc.name,
-    flavor: doc.flavor || "",
-    price: doc.price,
-    imageUrl: doc.imageUrl || imageUrls[0],
-    imageUrls,
-    description: doc.description,
+function productCreatedTimestamp(doc) {
+  if (doc && doc.createdAt instanceof Date) {
+    return doc.createdAt.getTime()
   }
+  if (doc && doc._id && typeof doc._id.getTimestamp === "function") {
+    return doc._id.getTimestamp().getTime()
+  }
+  return 0
 }
 
-function docToPowder(doc) {
+function docToProduct(doc, catById = null, colById = null) {
   const imageUrls =
     Array.isArray(doc.imageUrls) && doc.imageUrls.length > 0
       ? doc.imageUrls
       : doc.imageUrl
         ? [doc.imageUrl]
         : []
-  return {
+  const detail = String(doc.detail || doc.flavor || doc.sublabel || "").trim()
+  const out = {
     id: doc.id,
     name: doc.name,
-    sublabel: doc.sublabel || "",
     price: doc.price,
     imageUrl: doc.imageUrl || imageUrls[0],
     imageUrls,
     description: doc.description,
+    detail: detail || undefined,
+    flavor: detail,
+    sublabel: detail,
   }
+  if (catById && doc.categoryId) {
+    const cat = catById.get(doc.categoryId)
+    if (cat) {
+      out.categoryId = doc.categoryId
+      out.categoryName = cat.name
+      out.categorySlug = cat.slug
+    }
+  }
+  if (colById && doc.collectionId) {
+    const col = colById.get(doc.collectionId)
+    if (col) {
+      out.collectionId = doc.collectionId
+      out.collectionName = col.name
+    }
+  }
+  const createdMs = productCreatedTimestamp(doc)
+  if (createdMs > 0) {
+    out.createdAt = new Date(createdMs).toISOString()
+  }
+  return out
+}
+
+function normalizeProductKind(doc) {
+  const k = doc.kind
+  if (k === "bar") return "trending"
+  if (k === "powder") return "hoodies"
+  return k || "trending"
+}
+
+function bucketKeyForNormalizedKind(kind) {
+  if (kind === "pants") return "pants"
+  if (kind === "hoodie" || kind === "hoodies") return "hoodies"
+  if (kind === "tee" || kind === "tees") return "tees"
+  return "trending"
 }
 
 const storage = multer.diskStorage({
@@ -545,19 +598,201 @@ app.delete("/api/me/cart/items/:productId", authMiddleware, async (req, res) => 
 
 app.get("/api/products", async (_req, res) => {
   try {
-    const docs = await productsCollection.find({}).toArray()
-    const bars = []
-    const powder = []
+    const [docs, catDocs, colDocs] = await Promise.all([
+      productsCollection.find({}).toArray(),
+      categoriesCollection.find({}).toArray(),
+      collectionsCollection.find({}).toArray(),
+    ])
+    const catById = new Map(catDocs.map((c) => [c.id, c]))
+    const colById = new Map(colDocs.map((c) => [c.id, c]))
+    const payload = { trending: [], pants: [], hoodies: [], tees: [] }
     for (const doc of docs) {
-      if (doc.kind === "bar") {
-        bars.push(docToBar(doc))
-      } else if (doc.kind === "powder") {
-        powder.push(docToPowder(doc))
-      }
+      const nk = normalizeProductKind(doc)
+      const bucket = bucketKeyForNormalizedKind(nk)
+      payload[bucket].push(docToProduct(doc, catById, colById))
     }
-    res.json({ powder, bars })
+    const shopCategories = catDocs.map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      description: String(c.description || "").trim(),
+      coverImageUrl: c.coverImageUrl || null,
+    }))
+    res.json({ ...payload, shopCategories })
   } catch {
     res.status(500).json({ error: "Could not read products" })
+  }
+})
+
+app.get("/api/admin/categories", adminProductsAuth, async (_req, res) => {
+  try {
+    const rows = await categoriesCollection.find({}).sort({ name: 1 }).toArray()
+    res.json({
+      categories: rows.map((d) => ({
+        id: d.id,
+        name: d.name,
+        slug: d.slug,
+        description: String(d.description || "").trim(),
+        coverImageUrl: d.coverImageUrl || null,
+        createdAt: d.createdAt,
+      })),
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Could not read categories" })
+  }
+})
+
+app.post(
+  "/api/admin/categories",
+  adminProductsAuth,
+  upload.single("cover"),
+  async (req, res) => {
+    try {
+      const name = typeof req.body?.name === "string" ? req.body.name.trim() : ""
+      const description =
+        typeof req.body?.description === "string" ? req.body.description.trim() : ""
+      if (!name) {
+        return res.status(400).json({ error: "Nombre requerido" })
+      }
+      const base = slugify(name)
+      let slug = base
+      let n = 0
+      while (await categoriesCollection.findOne({ slug })) {
+        n += 1
+        slug = `${base}-${n}`
+      }
+      const id = `cat-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      const coverImageUrl = req.file ? `/uploads/${req.file.filename}` : null
+      await categoriesCollection.insertOne({
+        id,
+        name,
+        slug,
+        description: description || "",
+        coverImageUrl,
+        createdAt: new Date(),
+      })
+      res.status(201).json({
+        ok: true,
+        category: { id, name, slug, description: description || "", coverImageUrl },
+      })
+    } catch (err) {
+      if (err && err.code === 11000) {
+        return res.status(409).json({ error: "Slug duplicado" })
+      }
+      console.error(err)
+      res.status(500).json({ error: "Could not save category" })
+    }
+  },
+)
+
+app.delete("/api/admin/categories/:id", adminProductsAuth, async (req, res) => {
+  try {
+    const id = typeof req.params.id === "string" ? req.params.id.trim() : ""
+    if (!id) {
+      return res.status(400).json({ error: "id requerido" })
+    }
+    const count = await productsCollection.countDocuments({ categoryId: id })
+    if (count > 0) {
+      return res.status(409).json({ error: `Hay ${count} producto(s) con esta categoría` })
+    }
+    const r = await categoriesCollection.deleteOne({ id })
+    if (r.deletedCount === 0) {
+      return res.status(404).json({ error: "Categoría no encontrada" })
+    }
+    res.json({ ok: true })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Could not delete category" })
+  }
+})
+
+app.get("/api/admin/collections", adminProductsAuth, async (_req, res) => {
+  try {
+    const rows = await collectionsCollection.find({}).sort({ name: 1 }).toArray()
+    res.json({
+      collections: rows.map((d) => ({
+        id: d.id,
+        name: d.name,
+        slug: d.slug,
+        description: String(d.description || "").trim(),
+        coverImageUrl: d.coverImageUrl || null,
+        createdAt: d.createdAt,
+      })),
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Could not read collections" })
+  }
+})
+
+app.post(
+  "/api/admin/collections",
+  adminProductsAuth,
+  upload.single("cover"),
+  async (req, res) => {
+    try {
+      const name = typeof req.body?.name === "string" ? req.body.name.trim() : ""
+      const description =
+        typeof req.body?.description === "string" ? req.body.description.trim() : ""
+      if (!name) {
+        return res.status(400).json({ error: "Nombre requerido" })
+      }
+      const base = slugify(name)
+      let slug = base
+      let n = 0
+      while (await collectionsCollection.findOne({ slug })) {
+        n += 1
+        slug = `${base}-${n}`
+      }
+      const id = `col-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      const coverImageUrl = req.file ? `/uploads/${req.file.filename}` : null
+      await collectionsCollection.insertOne({
+        id,
+        name,
+        slug,
+        description: description || "",
+        coverImageUrl,
+        createdAt: new Date(),
+      })
+      res.status(201).json({
+        ok: true,
+        collection: {
+          id,
+          name,
+          slug,
+          description: description || "",
+          coverImageUrl,
+        },
+      })
+    } catch (err) {
+      if (err && err.code === 11000) {
+        return res.status(409).json({ error: "Slug duplicado" })
+      }
+      console.error(err)
+      res.status(500).json({ error: "Could not save collection" })
+    }
+  },
+)
+
+app.delete("/api/admin/collections/:id", adminProductsAuth, async (req, res) => {
+  try {
+    const id = typeof req.params.id === "string" ? req.params.id.trim() : ""
+    if (!id) {
+      return res.status(400).json({ error: "id requerido" })
+    }
+    const count = await productsCollection.countDocuments({ collectionId: id })
+    if (count > 0) {
+      return res.status(409).json({ error: `Hay ${count} producto(s) en esta colección` })
+    }
+    const r = await collectionsCollection.deleteOne({ id })
+    if (r.deletedCount === 0) {
+      return res.status(404).json({ error: "Colección no encontrada" })
+    }
+    res.json({ ok: true })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Could not delete collection" })
   }
 })
 
@@ -566,14 +801,44 @@ app.post(
   adminProductsAuth,
   upload.array("images", 12),
   async (req, res) => {
-  const { type, name, price, detail, description } = req.body
+  const { name, price, detail, description, categoryId, collectionId } = req.body
   const files = req.files
   if (!files || files.length === 0) {
     return res.status(400).json({ error: "At least one image required" })
   }
-  if (!type || (type !== "bar" && type !== "powder")) {
-    return res.status(400).json({ error: "Invalid type" })
+  const categoryIdTrim =
+    typeof categoryId === "string" ? categoryId.trim() : ""
+  const collectionIdTrim =
+    typeof collectionId === "string" ? collectionId.trim() : ""
+  if (!categoryIdTrim || !collectionIdTrim) {
+    return res.status(400).json({ error: "Categoría y colección son obligatorias" })
   }
+  const category = await categoriesCollection.findOne({ id: categoryIdTrim })
+  const collection = await collectionsCollection.findOne({ id: collectionIdTrim })
+  if (!category) {
+    return res.status(400).json({ error: "Categoría no válida" })
+  }
+  if (!collection) {
+    return res.status(400).json({ error: "Colección no válida" })
+  }
+  const bucket =
+    category.storeBucket && VALID_STORE_BUCKETS.includes(category.storeBucket)
+      ? category.storeBucket
+      : "trending"
+  const kindByBucket = {
+    trending: "trending",
+    pants: "pants",
+    hoodies: "hoodie",
+    tees: "tee",
+  }
+  const prefixByBucket = {
+    trending: "tr-custom-",
+    pants: "pn-custom-",
+    hoodies: "hd-custom-",
+    tees: "ts-custom-",
+  }
+  const kind = kindByBucket[bucket]
+  const idPrefix = prefixByBucket[bucket]
   if (!name || !String(name).trim()) {
     return res.status(400).json({ error: "Name required" })
   }
@@ -586,32 +851,24 @@ app.post(
   const imageUrls = files.map((f) => `/uploads/${f.filename}`)
   const imageUrl = imageUrls[0]
   const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  const id = `${idPrefix}${suffix}`
+  const detailStr = detail ? String(detail).trim() : ""
   try {
-    if (type === "bar") {
-      const id = `b-custom-${suffix}`
-      await productsCollection.insertOne({
-        kind: "bar",
-        id,
-        name: String(name).trim(),
-        flavor: detail ? String(detail).trim() : "",
-        price: String(price).trim(),
-        imageUrl,
-        imageUrls,
-        description: String(description).trim(),
-      })
-    } else {
-      const id = `pow-custom-${suffix}`
-      await productsCollection.insertOne({
-        kind: "powder",
-        id,
-        name: String(name).trim(),
-        sublabel: detail ? String(detail).trim() : "",
-        price: String(price).trim(),
-        imageUrl,
-        imageUrls,
-        description: String(description).trim(),
-      })
-    }
+    await productsCollection.insertOne({
+      kind,
+      id,
+      categoryId: categoryIdTrim,
+      collectionId: collectionIdTrim,
+      name: String(name).trim(),
+      detail: detailStr,
+      flavor: detailStr,
+      sublabel: detailStr,
+      price: String(price).trim(),
+      imageUrl,
+      imageUrls,
+      description: String(description).trim(),
+      createdAt: new Date(),
+    })
     res.status(201).json({ ok: true })
   } catch (err) {
     if (err && err.code === 11000) {
