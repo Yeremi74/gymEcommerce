@@ -48,6 +48,7 @@ const collectionName = "custom_products"
 const usersCollectionName = "users"
 const categoriesCollectionName = "product_categories"
 const collectionsCollectionName = "product_collections"
+const inventoryMovementsCollectionName = "inventory_movements"
 
 const VALID_STORE_BUCKETS = ["trending", "pants", "hoodies", "tees"]
 
@@ -59,6 +60,7 @@ let productsCollection
 let usersCollection
 let categoriesCollection
 let collectionsCollection
+let inventoryMovementsCollection
 
 function ensureUploadsDir() {
   if (!fs.existsSync(uploadsDir)) {
@@ -78,6 +80,7 @@ async function connectMongo() {
   usersCollection = db.collection(usersCollectionName)
   categoriesCollection = db.collection(categoriesCollectionName)
   collectionsCollection = db.collection(collectionsCollectionName)
+  inventoryMovementsCollection = db.collection(inventoryMovementsCollectionName)
   await productsCollection.createIndex({ id: 1 }, { unique: true })
   await usersCollection.createIndex({ email: 1 }, { unique: true })
   await usersCollection.createIndex({ googleId: 1 }, { unique: true, sparse: true })
